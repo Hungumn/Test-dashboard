@@ -47,7 +47,7 @@ const navigation = () => {
     {
       title: 'Index Client',
       icon: HomeAccount,
-      path: '/pages/home-page',
+      path: '/home-page',
       openInNewTab: true
     },
     {

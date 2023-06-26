@@ -12,6 +12,7 @@ import TableSpanning from 'src/views/tables/TableSpanning'
 import TableCustomized from 'src/views/tables/TableCustomized'
 import TableCollapsible from 'src/views/tables/TableCollapsible'
 import TableStickyHeader from 'src/views/tables/TableStickyHeader'
+import UserLayout from 'src/layouts/UserLayout'
 
 const MUITable = () => {
   return (
@@ -63,5 +64,5 @@ const MUITable = () => {
     </Grid>
   )
 }
-
+MUITable.getLayout = page => <UserLayout>{page}</UserLayout>
 export default MUITable

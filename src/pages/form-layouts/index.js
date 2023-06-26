@@ -12,6 +12,7 @@ import FormLayoutsAlignment from 'src/views/form-layouts/FormLayoutsAlignment'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
+import UserLayout from 'src/layouts/UserLayout'
 
 const FormLayouts = () => {
   return (
@@ -33,5 +34,5 @@ const FormLayouts = () => {
     </DatePickerWrapper>
   )
 }
-
+FormLayouts.getLayout = page => <UserLayout>{page}</UserLayout>
 export default FormLayouts

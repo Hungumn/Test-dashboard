@@ -26,8 +26,13 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import 'src/assets/css/styles.scss'
 import { useState } from 'react'
+import 'swiper/swiper.scss';
+import 'rc-slider/assets/index.css';
+import 'react-rater/lib/react-rater.css';
 import AuthContextProvider from '../@core/context/AuthContext'
+import { wrapper } from 'store'
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -49,7 +54,9 @@ const App = props => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   // Variables
-  const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
+  // const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
+  const customRole = Component.customRole || 'admin';
+  const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
     <CacheProvider value={emotionCache}>
@@ -66,7 +73,7 @@ const App = props => {
         <SettingsProvider>
           <SettingsConsumer>
             {({ settings }) => {
-              return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
+              return <ThemeComponent settings={settings}>{getLayout(<Component customRole={customRole} {...pageProps} />)}</ThemeComponent>
             }}
           </SettingsConsumer>
         </SettingsProvider>
@@ -75,4 +82,4 @@ const App = props => {
   )
 }
 
-export default App
+export default wrapper.withRedux(App) 

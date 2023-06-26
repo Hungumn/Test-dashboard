@@ -18,6 +18,7 @@ import CardWithCollapse from 'src/views/cards/CardWithCollapse'
 import CardVerticalRatings from 'src/views/cards/CardVerticalRatings'
 import CardNavigationCenter from 'src/views/cards/CardNavigationCenter'
 import CardHorizontalRatings from 'src/views/cards/CardHorizontalRatings'
+import UserLayout from 'src/layouts/UserLayout'
 
 const CardBasic = () => {
   return (
@@ -79,5 +80,5 @@ const CardBasic = () => {
     </Grid>
   )
 }
-
+CardBasic.getLayout = page => <UserLayout>{page}</UserLayout>
 export default CardBasic

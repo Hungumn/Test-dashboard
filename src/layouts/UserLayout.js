@@ -18,6 +18,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 
 const UserLayout = ({ children }) => {
   // ** Hooks
+  const userAdmin = true
   const { settings, saveSettings } = useSettings()
 
   /**
@@ -29,20 +30,7 @@ const UserLayout = ({ children }) => {
    *  ! Do not change this value unless you know what you are doing. It can break the template.
    */
   const hidden = useMediaQuery(theme => theme.breakpoints.down('lg'))
-
-  const UpgradeToProImg = () => {
-    return (
-      <Box sx={{ mx: 'auto' }}>
-        {/* <a
-          target='_blank'
-          rel='noreferrer'
-          href='https://themeselection.com/products/materio-mui-react-nextjs-admin-template/'
-        >
-          <img width={230} alt='upgrade to premium' src={`/images/misc/upgrade-banner-${settings.mode}.png`} />
-        </a> */}
-      </Box>
-    )
-  }
+  console.log(children);
 
   return (
     <VerticalLayout
@@ -50,7 +38,6 @@ const UserLayout = ({ children }) => {
       settings={settings}
       saveSettings={saveSettings}
       verticalNavItems={VerticalNavItems()} // Navigation Items
-      afterVerticalNavMenuContent={UpgradeToProImg}
       verticalAppBarContent={(
         props // AppBar Content
       ) => (

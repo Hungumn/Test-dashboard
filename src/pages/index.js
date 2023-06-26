@@ -22,12 +22,14 @@ import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 import { useAuth } from 'src/@core/hooks/use-auth'
+import { useEffect } from 'react'
+import UserLayout from 'src/layouts/UserLayout'
 
-const Dashboard = () => {
+const Dashboard = props => {
+  const user = useAuth()
   useEffect(() => {
-   const user= useAuth()
-   console.log('user', user);
-  }, []);
+    console.log('role', props)
+  }, [])
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>
@@ -102,5 +104,6 @@ const Dashboard = () => {
     </ApexChartWrapper>
   )
 }
+Dashboard.getLayout = page => <UserLayout>{page}</UserLayout>
 
 export default Dashboard
