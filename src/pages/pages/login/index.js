@@ -21,6 +21,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
+import FormHelperText from '@mui/material/FormHelperText'
 
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google'
@@ -38,7 +39,11 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
-import Head from 'next/head';
+import Head from 'next/head'
+import { withStyles } from '@mui/styles'
+import { Formik } from 'formik'
+import { toast } from 'react-hot-toast'
+import * as Yup from 'yup'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -58,23 +63,34 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
   }
 }))
 
-const LoginPage = () => {
+const CssTextField = withStyles({
+  root: {
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#acacac',
+        borderRadius: 0
+      },
+      '&:hover fieldset': {
+        borderColor: '#acacac'
+      },
+      '&.Mui-focused fieldset': {
+        border: '1px solid #acacac'
+      }
+    }
+  }
+})(TextField)
+
+const LoginPage = props => {
   // ** State
-  const [values, setValues] = useState({
-    password: '',
-    showPassword: false
-  })
+
+  const [showPassword, setShowPassword] = useState(false)
 
   // ** Hook
   const theme = useTheme()
   const router = useRouter()
 
-  const handleChange = prop => event => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
-
   const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
+    setShowPassword(show => !show)
   }
 
   const handleMouseDownPassword = event => {
@@ -84,8 +100,8 @@ const LoginPage = () => {
   return (
     <Box className='content-center'>
       <Head>
-				<title>Login | Cloud Box Lesson</title>
-			</Head>
+        <title>Login | Cloud Box Lesson</title>
+      </Head>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -167,7 +183,136 @@ const LoginPage = () => {
             </Typography>
             <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
+          <Formik
+            enableReinitialize={true}
+            initialValues={{
+              email: '',
+              password: '',
+              submit: null
+            }}
+            validationSchema={Yup.object({
+              email: Yup.string().email('Valid Email').max(255).required('Email is required'),
+              password: Yup.string().required('Password is required').min(8, 'password more than 8')
+            })}
+            onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+              try {
+                console.log('values',values);
+                toast.success('Login Success!')
+              } catch (err) {
+                console.log(err)
+                toast.error(err)
+              }
+            }}
+          >
+            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+              <form noValidate onSubmit={handleSubmit} {...props}>
+                <Typography component='label'>Email</Typography>
+                <CssTextField
+                  inputProps={{ style: { color: '#000', borderRadius: 0 } }}
+                  autoFocus
+                  error={Boolean(touched.email && errors.email)}
+                  fullWidth
+                  helperText={touched.email && errors.email}
+                  margin='normal'
+                  name='email'
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type='email'
+                  value={values.email}
+                />
+                <Typography component='label'>Password</Typography>
+                <CssTextField
+                  inputProps={{ style: { color: '#000', borderRadius: 0 } }}
+                  error={Boolean(touched.password && errors.password)}
+                  fullWidth
+                  helperText={touched.password && errors.password}
+                  margin='normal'
+                  name='password'
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type={showPassword ? 'text' : 'password'}
+                  value={values.password}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position='end'>
+                        <IconButton
+                          edge='end'
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          aria-label='toggle password visibility'
+                        >
+                          {showPassword ? <EyeOutline /> : <EyeOffOutline />}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+                {errors.submit && (
+                  <Box sx={{ mt: 5 }}>
+                    <FormHelperText variant='outlined' error>
+                      {errors.submit}
+                    </FormHelperText>
+                  </Box>
+                )}
+                <Box sx={{ mt: 2 }} textAlign='center'>
+                  <Button
+                    size='large'
+                    fullWidth
+                    disabled={isSubmitting}
+                    sx={{
+                      color: '#fff',
+                      borderRadius: '5px',
+                      boxShadow: '0px 6px 18px -8px rgba(58, 53, 65, 0.56)',
+                      bgcolor: '#804BDF',
+                      '&:hover': {
+                        bgcolor: '#804BDF'
+                      }
+                    }}
+                    type='submit'
+                    variant='contained'
+                  >
+                    Login
+                  </Button>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', mt: 5 }}>
+                  <Typography variant='body2' sx={{ marginRight: 2 }}>
+                    Already have an account?
+                  </Typography>
+                  <Typography variant='body2'>
+                    <Link passHref href='/pages/register'>
+                      <LinkStyled>Sign up instead</LinkStyled>
+                    </Link>
+                  </Typography>
+                </Box>
+                <Divider sx={{ my: 5 }}>or</Divider>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Link href='/' passHref>
+                    <IconButton component='a' onClick={e => e.preventDefault()}>
+                      <Facebook sx={{ color: '#497ce2' }} />
+                    </IconButton>
+                  </Link>
+                  <Link href='/' passHref>
+                    <IconButton component='a' onClick={e => e.preventDefault()}>
+                      <Twitter sx={{ color: '#1da1f2' }} />
+                    </IconButton>
+                  </Link>
+                  <Link href='/' passHref>
+                    <IconButton component='a' onClick={e => e.preventDefault()}>
+                      <Github
+                        sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300]) }}
+                      />
+                    </IconButton>
+                  </Link>
+                  <Link href='/' passHref>
+                    <IconButton component='a' onClick={e => e.preventDefault()}>
+                      <Google sx={{ color: '#db4437' }} />
+                    </IconButton>
+                  </Link>
+                </Box>
+              </form>
+            )}
+          </Formik>
+          {/* <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
             <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
@@ -243,7 +388,7 @@ const LoginPage = () => {
                 </IconButton>
               </Link>
             </Box>
-          </form>
+          </form> */}
         </CardContent>
       </Card>
       <FooterIllustrationsV1 />

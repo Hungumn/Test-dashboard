@@ -20,6 +20,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
+import { CircularProgress } from '@mui/material'
 
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google'
@@ -28,6 +29,7 @@ import Twitter from 'mdi-material-ui/Twitter'
 import Facebook from 'mdi-material-ui/Facebook'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
+import RegisteredTrademark from 'mdi-material-ui/RegisteredTrademark'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
@@ -40,6 +42,10 @@ import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
+import { toast } from 'react-hot-toast'
+import Head from 'next/head'
+import _debounce from 'lodash/debounce'
+import { LoadingButton } from '@mui/lab'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -63,10 +69,8 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 
 const RegisterPage = () => {
   // ** States
-  const [values, setValues] = useState({
-    password: '',
-    showPassword: false
-  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // ** Hook
   const theme = useTheme()
@@ -76,12 +80,14 @@ const RegisterPage = () => {
   }
 
   const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
+    setShowPassword(show => !show)
   }
 
   const handleMouseDownPassword = event => {
     event.preventDefault()
   }
+
+  const _ = require('lodash')
 
   const formik = useFormik({
     initialValues: {
@@ -96,7 +102,7 @@ const RegisterPage = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        console.log('values...,',values);
+        await handleSubmit(values, helpers.setSubmitting)
         helpers.setStatus({ success: true })
         helpers.setSubmitting(false)
       } catch (err) {
@@ -108,8 +114,25 @@ const RegisterPage = () => {
     }
   })
 
+  const handleSubmit = async (values, setSubmitting) => {
+    try {
+      setIsLoading(true)
+      setTimeout(() => {
+        console.log(values)
+        toast.success('Register Successfully')
+        setIsLoading(false)
+      }, 5000)
+    } catch (err) {
+      toast.error('会員登録ンエラー')
+      console.error(err)
+    }
+  }
+
   return (
     <Box className='content-center'>
+      <Head>
+        <title>Register | Cloud Box Lesson</title>
+      </Head>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -218,15 +241,20 @@ const RegisterPage = () => {
               value={formik.values.email}
               sx={{ marginBottom: 4 }}
             />
-            <FormControl fullWidth>
-              <InputLabel htmlFor='auth-register-password'>Password</InputLabel>
-              <OutlinedInput
-                label='Password'
-                value={values.password}
-                id='auth-register-password'
-                onChange={handleChange('password')}
-                type={values.showPassword ? 'text' : 'password'}
-                endAdornment={
+            <TextField
+              error={Boolean(formik.touched.password && formik.errors.password)}
+              fullWidth
+              helperText={formik.touched.password && formik.errors.password}
+              label='Password'
+              margin='normal'
+              name='password'
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.password}
+              sx={{ marginBottom: 4 }}
+              type={showPassword ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
                   <InputAdornment position='end'>
                     <IconButton
                       edge='end'
@@ -234,12 +262,12 @@ const RegisterPage = () => {
                       onMouseDown={handleMouseDownPassword}
                       aria-label='toggle password visibility'
                     >
-                      {values.showPassword ? <EyeOutline fontSize='small' /> : <EyeOffOutline fontSize='small' />}
+                      {showPassword ? <EyeOutline /> : <EyeOffOutline />}
                     </IconButton>
                   </InputAdornment>
-                }
-              />
-            </FormControl>
+                )
+              }}
+            />
             <FormControlLabel
               control={<Checkbox />}
               label={
@@ -251,16 +279,32 @@ const RegisterPage = () => {
                 </Fragment>
               }
             />
-            <Button
-              fullWidth
-              size='large'
-              type='submit'
-              variant='contained'
-              sx={{ marginBottom: 7 }}
-              onClick={formik.handleSubmit}
-            >
-              Sign up
-            </Button>
+            {isLoading ? (
+              <LoadingButton
+                loading
+                fullWidth
+                size='large'
+                loadingPosition='start'
+                startIcon={<RegisteredTrademark />}
+                variant='outlined'
+                sx={{ marginBottom: 7 }}
+              >
+                Save
+              </LoadingButton>
+            ) : (
+              <Button
+                fullWidth
+                size='large'
+                type='submit'
+                variant='contained'
+                sx={{ marginBottom: 7 }}
+                disabled={isLoading}
+                onClick={formik.handleSubmit}
+              >
+                Sign up
+              </Button>
+            )}
+
             <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Typography variant='body2' sx={{ marginRight: 2 }}>
                 Already have an account?
