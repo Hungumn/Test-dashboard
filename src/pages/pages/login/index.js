@@ -44,6 +44,9 @@ import { withStyles } from '@mui/styles'
 import { Formik } from 'formik'
 import { toast } from 'react-hot-toast'
 import * as Yup from 'yup'
+import { LoadingButton } from '@mui/lab'
+import RegisteredTrademark from 'mdi-material-ui/RegisteredTrademark'
+import LinearProgress from '@mui/material/LinearProgress'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -84,6 +87,7 @@ const LoginPage = props => {
   // ** State
 
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // ** Hook
   const theme = useTheme()
@@ -98,10 +102,11 @@ const LoginPage = props => {
   }
 
   return (
-    <Box className='content-center'>
+    <Box className='content-center' display={'flex'}>
       <Head>
         <title>Login | Cloud Box Lesson</title>
       </Head>
+
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -196,8 +201,12 @@ const LoginPage = props => {
             })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
               try {
-                console.log('values',values);
-                toast.success('Login Success!')
+                setIsLoading(true)
+                setTimeout(() => {
+                  console.log('values', values)
+                  toast.success('Login Success!')
+                  setIsLoading(false)
+                }, 5000)
               } catch (err) {
                 console.log(err)
                 toast.error(err)
@@ -215,6 +224,7 @@ const LoginPage = props => {
                   helperText={touched.email && errors.email}
                   margin='normal'
                   name='email'
+                  disabled={isLoading}
                   onBlur={handleBlur}
                   onChange={handleChange}
                   type='email'
@@ -232,6 +242,7 @@ const LoginPage = props => {
                   onChange={handleChange}
                   type={showPassword ? 'text' : 'password'}
                   value={values.password}
+                  disabled={isLoading}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position='end'>
@@ -254,25 +265,45 @@ const LoginPage = props => {
                     </FormHelperText>
                   </Box>
                 )}
-                <Box sx={{ mt: 2 }} textAlign='center'>
-                  <Button
-                    size='large'
-                    fullWidth
-                    disabled={isSubmitting}
-                    sx={{
-                      color: '#fff',
-                      borderRadius: '5px',
-                      boxShadow: '0px 6px 18px -8px rgba(58, 53, 65, 0.56)',
-                      bgcolor: '#804BDF',
-                      '&:hover': {
-                        bgcolor: '#804BDF'
-                      }
-                    }}
-                    type='submit'
-                    variant='contained'
-                  >
-                    Login
-                  </Button>
+                <Box sx={{ mt: 5 }} textAlign='center'>
+                  {isLoading ? (
+                    <>
+                      <Box sx={{ width: '100%', mb: 5 }}>
+                        <LinearProgress color='error' sx={{height:'6px'}}/>
+                      </Box>
+                      {/* <LoadingButton
+                        loading
+                        fullWidth
+                        size='large'
+                        loadingPosition='start'
+                        startIcon={<RegisteredTrademark />}
+                        variant='outlined'
+                        sx={{ marginBottom: 7 }}
+                      >
+                        Sending...
+                      </LoadingButton> */}
+                    </>
+                  ) : (
+                    <Button
+                      fullWidth
+                      size='large'
+                      type='submit'
+                      variant='contained'
+                      sx={{
+                        marginBottom: 7,
+                        color: '#fff',
+                        borderRadius: '5px',
+                        boxShadow: '0px 6px 18px -8px rgba(58, 53, 65, 0.56)',
+                        bgcolor: '#804BDF',
+                        '&:hover': {
+                          bgcolor: '#804BDF'
+                        }
+                      }}
+                      disabled={isLoading}
+                    >
+                      Login
+                    </Button>
+                  )}
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', mt: 5 }}>
                   <Typography variant='body2' sx={{ marginRight: 2 }}>

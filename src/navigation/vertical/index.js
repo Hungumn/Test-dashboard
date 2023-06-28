@@ -24,6 +24,11 @@ const navigation = () => {
       path: '/account-settings'
     },
     {
+      title: 'Product',
+      icon: AccountCogOutline,
+      path: '/products-admin'
+    },
+    {
       sectionTitle: 'Pages'
     },
     {

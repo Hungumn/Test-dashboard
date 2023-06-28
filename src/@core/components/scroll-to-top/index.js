@@ -16,7 +16,7 @@ const ScrollToTop = props => {
 
   // ** init trigger
   const trigger = useScrollTrigger({
-    threshold: 400,
+    threshold: 200,
     disableHysteresis: true
   })
 
