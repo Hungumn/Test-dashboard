@@ -742,24 +742,24 @@
   dependencies:
     cross-fetch "^3.1.5"
 
-"@supabase/gotrue-js@^2.26.0":
-  version "2.26.0"
-  resolved "https://registry.npmjs.org/@supabase/gotrue-js/-/gotrue-js-2.26.0.tgz"
-  integrity sha512-orxz8nwaF5D1nY/9H5xxTfFSCTvYeDLx24UO/Mxsx83xFP0t5RNxQZ0lEHBOhHhXJ4vR/COv79AxoWCOTu/7Rg==
+"@supabase/gotrue-js@^2.31.0":
+  version "2.34.0"
+  resolved "https://registry.yarnpkg.com/@supabase/gotrue-js/-/gotrue-js-2.34.0.tgz#20637923a9ae584d132a3647c7d594e976be2d99"
+  integrity sha512-j4up+jZDyutUwKcrwDXhVbeHFydUu9wLvotr4qREenz+ec0d3L7Zs0Nb1hP8B64HbJ4tmFXhpOG23IsvQtC58w==
   dependencies:
     cross-fetch "^3.1.5"
 
-"@supabase/postgrest-js@^1.1.1":
-  version "1.6.1"
-  resolved "https://registry.npmjs.org/@supabase/postgrest-js/-/postgrest-js-1.6.1.tgz"
-  integrity sha512-WDBUPOCOwcZonaCwEodwdA8hwWYOiXroDF9vWGxZxKAnuSVE2Ieci/kvhR4EsWvgGST2h90LRowgO+msXe8+fA==
+"@supabase/postgrest-js@^1.7.0":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-1.7.1.tgz#12158937783bdc750ada705d7135d01f2fc96196"
+  integrity sha512-xPRYLaZrkLbXNlzmHW6Wtf9hmcBLjjI5xUz2zj8oE2hgXGaYoZBBkpN9bmW9i17Z1f6Ujxa942AqK439XOA36A==
   dependencies:
     cross-fetch "^3.1.5"
 
-"@supabase/realtime-js@^2.7.2":
-  version "2.7.2"
-  resolved "https://registry.npmjs.org/@supabase/realtime-js/-/realtime-js-2.7.2.tgz"
-  integrity sha512-Fi6xAl5PUkqnjl3wo4rdcQIbMG3+yTRX1aUZe/yfvTG84RMvmCXJ1yN6MmafVLeZpU1xkaz5Vx4L0tnHcLiy6w==
+"@supabase/realtime-js@^2.7.3":
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/@supabase/realtime-js/-/realtime-js-2.7.3.tgz#cbcb84181add681ab99c87032bfe88101c6863b3"
+  integrity sha512-c7TzL81sx2kqyxsxcDduJcHL9KJdCOoKimGP6lQSqiZKX42ATlBZpWbyy9KFGFBjAP4nyopMf5JhPi2ZH9jyNw==
   dependencies:
     "@types/phoenix" "^1.5.4"
     "@types/websocket" "^1.0.3"
@@ -772,19 +772,24 @@
   dependencies:
     cross-fetch "^3.1.5"
 
-"@supabase/supabase-js@^2.22.0":
-  version "2.22.0"
-  resolved "https://registry.npmjs.org/@supabase/supabase-js/-/supabase-js-2.22.0.tgz"
-  integrity sha512-omkgSWL1HwnpXZZy+yshFLx/qqxwk9kx9jbRM6IHNEylKrH/sz6JX7rGyIOmN9niDxMRjsCu1nwuBhD6IiF2xg==
+"@supabase/supabase-js@^2.26.0":
+  version "2.26.0"
+  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.26.0.tgz#80eb5d7b6dc5ac7b29218f7211747e256184247a"
+  integrity sha512-RXmTPTobaYAwkSobadHZmEVLmzX3SGrtRZIGfLWnLv92VzBRrjuXn0a+bJqKl50GUzsyqPA+j5pod7EwMkcH5A==
   dependencies:
     "@supabase/functions-js" "^2.1.0"
-    "@supabase/gotrue-js" "^2.26.0"
-    "@supabase/postgrest-js" "^1.1.1"
-    "@supabase/realtime-js" "^2.7.2"
+    "@supabase/gotrue-js" "^2.31.0"
+    "@supabase/postgrest-js" "^1.7.0"
+    "@supabase/realtime-js" "^2.7.3"
     "@supabase/storage-js" "^2.5.1"
     cross-fetch "^3.1.5"
 
-"@types/hoist-non-react-statics@^3.3.1":
+"@types/cookie@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@types/cookie/-/cookie-0.3.3.tgz#85bc74ba782fb7aa3a514d11767832b0e3bc6803"
+  integrity sha512-LKVP3cgXBT9RYj+t+9FDKwS5tdI+rPBXaNSkma7hvqy35lc7mAokC2zsqWJH0LaqIt3B962nuYI77hsJoT1gow==
+
+"@types/hoist-non-react-statics@^3.0.1", "@types/hoist-non-react-statics@^3.3.1":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz#1124aafe5118cb591977aeb1ceaaed1070eb039f"
   integrity sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==
@@ -1466,6 +1471,11 @@ convert-source-map@^1.5.0:
   integrity sha512-+OQdjP49zViI/6i7nIJpA8rAl4sV/JdPfU9nZs3VqOwGIgizICvuN2ru6fMd+4llL0tar18UYJXfZ/TWtmhUjA==
   dependencies:
     safe-buffer "~5.1.1"
+
+cookie@^0.4.0:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.2.tgz#0e41f24de5ecf317947c82fc789e06a884824432"
+  integrity sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==
 
 core-js-pure@^3.20.2:
   version "3.21.1"
@@ -2433,7 +2443,7 @@ hmac-drbg@^1.0.1:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.1"
 
-hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.1, hoist-non-react-statics@^3.3.2:
+hoist-non-react-statics@^3.0.0, hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.1, hoist-non-react-statics@^3.3.2:
   version "3.3.2"
   resolved "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz"
   integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
@@ -3623,6 +3633,15 @@ react-apexcharts@^1.3.9:
   dependencies:
     prop-types "^15.5.7"
 
+react-cookie@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/react-cookie/-/react-cookie-4.1.1.tgz#832e134ad720e0de3e03deaceaab179c4061a19d"
+  integrity sha512-ffn7Y7G4bXiFbnE+dKhHhbP+b8I34mH9jqnm8Llhj89zF4nPxPutxHT1suUqMeCEhLDBI7InYwf1tpaSoK5w8A==
+  dependencies:
+    "@types/hoist-non-react-statics" "^3.0.1"
+    hoist-non-react-statics "^3.0.0"
+    universal-cookie "^4.0.0"
+
 react-datepicker@^4.5.0:
   version "4.7.0"
   resolved "https://registry.npmjs.org/react-datepicker/-/react-datepicker-4.7.0.tgz"
@@ -4475,6 +4494,14 @@ unbox-primitive@^1.0.1:
     has-bigints "^1.0.1"
     has-symbols "^1.0.2"
     which-boxed-primitive "^1.0.2"
+
+universal-cookie@^4.0.0:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/universal-cookie/-/universal-cookie-4.0.4.tgz#06e8b3625bf9af049569ef97109b4bb226ad798d"
+  integrity sha512-lbRVHoOMtItjWbM7TwDLdl8wug7izB0tq3/YVKhT/ahB4VDvWMyvnADfnJI8y6fSvsjh51Ix7lTGC6Tn4rMPhw==
+  dependencies:
+    "@types/cookie" "^0.3.3"
+    cookie "^0.4.0"
 
 unpipe@1.0.0:
   version "1.0.0"

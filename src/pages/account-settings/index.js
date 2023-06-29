@@ -23,6 +23,7 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
 import UserLayout from 'src/layouts/UserLayout'
+import { AuthGuard } from 'src/@core/hooks/auth-guard'
 
 const Tab = styled(MuiTab)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -100,5 +101,10 @@ const AccountSettings = () => {
     </Card>
   )
 }
-AccountSettings.getLayout = page => <UserLayout>{page}</UserLayout>
+
+AccountSettings.getLayout = (page) => (
+  <AuthGuard>
+    <UserLayout>{page}</UserLayout>
+  </AuthGuard>
+)
 export default AccountSettings

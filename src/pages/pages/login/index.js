@@ -47,6 +47,8 @@ import * as Yup from 'yup'
 import { LoadingButton } from '@mui/lab'
 import RegisteredTrademark from 'mdi-material-ui/RegisteredTrademark'
 import LinearProgress from '@mui/material/LinearProgress'
+import { supabase } from 'src/utils/supabaseClient'
+import { useAuth } from 'src/@core/hooks/use-auth'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -92,6 +94,7 @@ const LoginPage = props => {
   // ** Hook
   const theme = useTheme()
   const router = useRouter()
+  const { login } = useAuth()
 
   const handleClickShowPassword = () => {
     setShowPassword(show => !show)
@@ -202,14 +205,22 @@ const LoginPage = props => {
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
               try {
                 setIsLoading(true)
-                setTimeout(() => {
-                  console.log('values', values)
-                  toast.success('Login Success!')
+                const userLogin = await login(values.email, values.password)
+                if (!userLogin) {
+                  toast.error('Login failed, Please try again...')
                   setIsLoading(false)
-                }, 5000)
+                  throw new Error()
+                } else if (userLogin.role === 'admin') {
+                  toast.success('Login Success...')
+                  setIsLoading(false)
+                  router.push('/')
+                } else {
+                  toast.success('Login Success...')
+                  setIsLoading(false)
+                  router.push('/home-page')
+                }
               } catch (err) {
                 console.log(err)
-                toast.error(err)
               }
             }}
           >
@@ -269,19 +280,8 @@ const LoginPage = props => {
                   {isLoading ? (
                     <>
                       <Box sx={{ width: '100%', mb: 5 }}>
-                        <LinearProgress color='error' sx={{height:'6px'}}/>
+                        <LinearProgress color='error' sx={{ height: '6px' }} />
                       </Box>
-                      {/* <LoadingButton
-                        loading
-                        fullWidth
-                        size='large'
-                        loadingPosition='start'
-                        startIcon={<RegisteredTrademark />}
-                        variant='outlined'
-                        sx={{ marginBottom: 7 }}
-                      >
-                        Sending...
-                      </LoadingButton> */}
                     </>
                   ) : (
                     <Button
@@ -343,83 +343,6 @@ const LoginPage = props => {
               </form>
             )}
           </Formik>
-          {/* <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
-            <FormControl fullWidth>
-              <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
-              <OutlinedInput
-                label='Password'
-                value={values.password}
-                id='auth-login-password'
-                onChange={handleChange('password')}
-                type={values.showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      aria-label='toggle password visibility'
-                    >
-                      {values.showPassword ? <EyeOutline /> : <EyeOffOutline />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-            <Box
-              sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
-            >
-              <FormControlLabel control={<Checkbox />} label='Remember Me' />
-              <Link passHref href='/'>
-                <LinkStyled onClick={e => e.preventDefault()}>Forgot Password?</LinkStyled>
-              </Link>
-            </Box>
-            <Button
-              fullWidth
-              size='large'
-              variant='contained'
-              sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
-            >
-              Login
-            </Button>
-            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Typography variant='body2' sx={{ marginRight: 2 }}>
-                New on our platform?
-              </Typography>
-              <Typography variant='body2'>
-                <Link passHref href='/pages/register'>
-                  <LinkStyled>Create an account</LinkStyled>
-                </Link>
-              </Typography>
-            </Box>
-            <Divider sx={{ my: 5 }}>or</Divider>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Facebook sx={{ color: '#497ce2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Twitter sx={{ color: '#1da1f2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Github
-                    sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300]) }}
-                  />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Google sx={{ color: '#db4437' }} />
-                </IconButton>
-              </Link>
-            </Box>
-          </form> */}
         </CardContent>
       </Card>
       <FooterIllustrationsV1 />

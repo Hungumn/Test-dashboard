@@ -24,11 +24,12 @@ import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 import { useAuth } from 'src/@core/hooks/use-auth'
 import { useEffect } from 'react'
 import UserLayout from 'src/layouts/UserLayout'
+import { AuthGuard } from 'src/@core/hooks/auth-guard'
 
 const Dashboard = props => {
   const user = useAuth()
   useEffect(() => {
-    console.log('role', props)
+    console.log('role', user)
   }, [])
   return (
     <ApexChartWrapper>
@@ -104,6 +105,10 @@ const Dashboard = props => {
     </ApexChartWrapper>
   )
 }
-Dashboard.getLayout = page => <UserLayout>{page}</UserLayout>
+Dashboard.getLayout = (page) => (
+  <AuthGuard role={'admin'}>
+    <UserLayout>{page}</UserLayout>
+  </AuthGuard>
+)
 
 export default Dashboard

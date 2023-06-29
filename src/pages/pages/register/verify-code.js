@@ -48,8 +48,30 @@ import _debounce from 'lodash/debounce'
 import { LoadingButton } from '@mui/lab'
 import { supabase } from 'src/utils/supabaseClient'
 import { useAuth } from 'src/@core/hooks/use-auth'
+import { withStyles } from '@mui/styles'
+import { useEffect } from 'react'
+import { useRef } from 'react'
+import { useMounted } from 'src/@core/hooks/use-mounted'
 
 // ** Styled Components
+
+const CssTextField = withStyles({
+  root: {
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#000'
+      },
+      '&:hover fieldset': {
+        borderColor: '#000'
+      },
+      '&.Mui-focused fieldset': {
+        border: '1px solid #000'
+      },
+      color: '#000'
+    }
+  }
+})(TextField)
+
 const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: { width: '28rem' }
 }))
@@ -69,34 +91,83 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
   }
 }))
 
-const RegisterPage = () => {
+const VerifyCode = (props) => {
   // ** States
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [username, setUsername] = useState('')
+  useEffect(() => {
+    itemsRef.current = itemsRef.current.slice(0, 6)
+
+    const storedUsername = sessionStorage.getItem('username')
+
+    if (storedUsername) {
+      setUsername(storedUsername)
+    } else if (localStorage.getItem('USER_EMAIL')) {
+      setUsername(localStorage.getItem('USER_EMAIL'))
+    }
+  }, [])
 
   // ** Hook
   const theme = useTheme()
   const router = useRouter()
-
-  const handleChange = prop => event => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
-
-  const handleClickShowPassword = () => {
-    setShowPassword(show => !show)
-  }
+  const itemsRef = useRef([])
+  const isMounted = useMounted()
+  const { verifyCode } = useAuth()
 
   const handleMouseDownPassword = event => {
     event.preventDefault()
   }
 
   const _ = require('lodash')
+  const handleKeyDown = (event, index) => {
+    if (event.code === 'Enter') {
+      if (formik.values.code[index]) {
+        formik.setFieldValue(`code[${index}]`, '')
+        return
+      }
+
+      if (index > 0) {
+        formik.setFieldValue(`code[${index}]`, '')
+        itemsRef.current[index - 1].focus()
+        return
+      }
+    }
+
+    if (Number.isInteger(parseInt(event.key, 10))) {
+      formik.setFieldValue(`code[${index}]`, event.key)
+
+      if (index < 5) {
+        itemsRef.current[index + 1].focus()
+      }
+    }
+  }
+
+  const handlePaste = event => {
+    const paste = event.clipboardData.getData('text')
+    const pasteArray = paste.split('')
+
+    if (pasteArray.length !== 6) {
+      return
+    }
+
+    let valid = true
+
+    pasteArray.forEach(x => {
+      if (!Number.isInteger(parseInt(x, 10))) {
+        valid = false
+      }
+    })
+
+    if (valid) {
+      formik.setFieldValue('code', pasteArray)
+      itemsRef.current[5].focus()
+    }
+  }
 
   const formik = useFormik({
     initialValues: {
-      username: '',
-      email: '',
-      password: ''
+      email: username,
+      code: ['', '', '', '', '', ''],
+      submit: null
     },
     validationSchema: Yup.object({
       username: Yup.string().required('username is required').nullable(),
@@ -105,52 +176,33 @@ const RegisterPage = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await handleSubmit(values, helpers.setSubmitting)
-        helpers.setStatus({ success: true })
-        helpers.setSubmitting(false)
+        await verifyCode(values.email ? values.email : username, values.code.join(''))
+
+        if (isMounted()) {
+          router.push('/login').catch(console.error)
+        }
       } catch (err) {
-        console.error(err)
-        helpers.setStatus({ success: false })
-        helpers.setErrors({ submit: err.message })
-        helpers.setSubmitting(false)
+				console.error(err)
       }
     }
   })
 
-  const handleSubmit = async (values, setSubmitting) => {
-    try {
-      // await register(values.email, values.password, values.username)
-      setIsLoading(true)
-      const { data, error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          data: {
-            username: values.username,
-            email: values.email
-          }
-        }
-      })
-      console.log('register...', data)
-      if (data.user.id) {
-        toast.success('Register Successfully')
-        console.log(data)
-        localStorage.setItem('USER_EMAIL', values.email)
-        setIsLoading(false)
-        router.push('pages/register/verify-code')
-      } else {
-        throw new Error()
-      }
+	const toastVerifyCode =(message) =>{
+		return toast.error(message)
+	}
 
-      // setIsLoading(true)
-      // setTimeout(() => {
-      //   console.log(values)
-      //   toast.success('Register Successfully')
-      //   setIsLoading(false)
-      // }, 5000)
+  const customSubmit = async () => {
+    try {
+      const data = await verifyCode(formik.values.email ? formik.values.email : username, formik.values.code.join(''))
+			console.log('in verifyCode', data);
+			if (data.error !== null){
+				toast.error(data.error.message)
+			}
+      // if (isMounted()) {
+      // 	router.push('/login').catch(console.error);
+      // }
     } catch (err) {
-      toast.error('Register Error')
-      console.error(err)
+      console.log(err)
     }
   }
 
@@ -236,135 +288,111 @@ const RegisterPage = () => {
           </Box>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-              Adventure starts here 🚀
+              Verify Code here 🚀
             </Typography>
-            <Typography variant='body2'>Make your app management easy and fun!</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={formik.handleSubmit}>
-            <TextField
-              error={Boolean(formik.touched.username && formik.errors.username)}
-              fullWidth
-              helperText={formik.touched.username && formik.errors.username}
-              label='UserName'
-              margin='normal'
-              name='username'
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              type='email'
-              value={formik.values.username}
-              sx={{ marginBottom: 4 }}
-            />
-            <TextField
-              error={Boolean(formik.touched.email && formik.errors.email)}
-              fullWidth
-              helperText={formik.touched.email && formik.errors.email}
-              label='Email Address'
-              margin='normal'
-              name='email'
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              type='email'
-              value={formik.values.email}
-              sx={{ marginBottom: 4 }}
-            />
-            <TextField
-              error={Boolean(formik.touched.password && formik.errors.password)}
-              fullWidth
-              helperText={formik.touched.password && formik.errors.password}
-              label='Password'
-              margin='normal'
-              name='password'
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.password}
-              sx={{ marginBottom: 4 }}
-              type={showPassword ? 'text' : 'password'}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      aria-label='toggle password visibility'
-                    >
-                      {showPassword ? <EyeOutline /> : <EyeOffOutline />}
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              label={
-                <Fragment>
-                  <span>I agree to </span>
-                  <Link href='/' passHref>
-                    <LinkStyled onClick={e => e.preventDefault()}>privacy policy & terms</LinkStyled>
-                  </Link>
-                </Fragment>
-              }
-            />
-            {isLoading ? (
-              <LoadingButton
-                loading
+          <form noValidate onSubmit={formik.handleSubmit} {...props}>
+            {!username ? (
+              <TextField
+                autoFocus
+                error={Boolean(formik.touched.email && formik.errors.email)}
                 fullWidth
-                size='large'
-                loadingPosition='start'
-                startIcon={<RegisteredTrademark />}
-                variant='outlined'
-                sx={{ marginBottom: 7 }}
-              >
-                Save
-              </LoadingButton>
+                helperText={formik.touched.email && formik.errors.email}
+                label='メールアドレス'
+                margin='normal'
+                name='email'
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type='email'
+                value={formik.values.email}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: '#000'
+                  }
+                }}
+              />
             ) : (
+              <CssTextField disabled fullWidth margin='normal' value={username} />
+            )}
+            <Typography
+              sx={{
+                mb: 2,
+                mt: 3
+              }}
+              variant='subtitle2'
+            >
+              Authentication Code
+            </Typography>
+            <Box
+              sx={{
+                columnGap: '16px',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(6, 1fr)',
+                pt: 1
+              }}
+            >
+              {[1, 2, 3, 4, 5, 6].map((ref, index) => (
+                <CssTextField
+                  error={Boolean(
+                    Array.isArray(formik.touched.code) && formik.touched.code.length === 6 && formik.errors.code
+                  )}
+                  fullWidth
+                  inputRef={el => (itemsRef.current[index] = el)}
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`code-${index}`}
+                  name={`code[${index}]`}
+                  onBlur={formik.handleBlur}
+                  onKeyDown={event => handleKeyDown(event, index)}
+                  onPaste={handlePaste}
+                  value={formik.values.code[index]}
+                  sx={{
+                    display: 'inline-block',
+                    textAlign: 'center',
+                    '& .MuiInputBase-input': {
+                      textAlign: 'center',
+                      '@media (max-width: 400px)': {
+                        p: 1
+                      },
+                      '@media (max-width: 350px)': {
+                        p: 0
+                      }
+                    }
+                  }}
+                  onChange={() => {
+                    formik.values.code[5] !== '' ? customSubmit() : null
+                    // console.log('test', index, formik.values.code[5])
+                  }}
+                />
+              ))}
+            </Box>
+            {Boolean(Array.isArray(formik.touched.code) && formik.touched.code.length === 6 && formik.errors.code) && (
+              <FormHelperText error sx={{ mx: '14px' }}>
+                {Array.isArray(formik.errors.code) && formik.errors.code.find(x => x !== undefined)}
+              </FormHelperText>
+            )}
+            {formik.errors.submit && (
+              <Box sx={{ mt: 3 }}>
+                <FormHelperText error>{formik.errors.submit}</FormHelperText>
+              </Box>
+            )}
+            <Box sx={{ mt: 3 }}>
               <Button
+                disabled={formik.isSubmitting}
                 fullWidth
                 size='large'
                 type='submit'
                 variant='contained'
-                sx={{ marginBottom: 7 }}
-                disabled={isLoading}
-                onClick={formik.handleSubmit}
+                sx={{
+                  color: '#fff',
+                  backgroundColor: '#000',
+                  borderRadius: 0,
+                  ':hover': {
+                    backgroundColor: '#000'
+                  }
+                }}
               >
-                Sign up
+                Confirmation
               </Button>
-            )}
-
-            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Typography variant='body2' sx={{ marginRight: 2 }}>
-                Already have an account?
-              </Typography>
-              <Typography variant='body2'>
-                <Link passHref href='/pages/login'>
-                  <LinkStyled>Sign in instead</LinkStyled>
-                </Link>
-              </Typography>
-            </Box>
-            <Divider sx={{ my: 5 }}>or</Divider>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Facebook sx={{ color: '#497ce2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Twitter sx={{ color: '#1da1f2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Github
-                    sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300]) }}
-                  />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Google sx={{ color: '#db4437' }} />
-                </IconButton>
-              </Link>
             </Box>
           </form>
         </CardContent>
@@ -373,6 +401,6 @@ const RegisterPage = () => {
     </Box>
   )
 }
-RegisterPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
+VerifyCode.getLayout = page => <BlankLayout>{page}</BlankLayout>
 
-export default RegisterPage
+export default VerifyCode
