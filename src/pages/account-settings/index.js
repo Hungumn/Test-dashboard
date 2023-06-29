@@ -24,6 +24,7 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 import 'react-datepicker/dist/react-datepicker.css'
 import UserLayout from 'src/layouts/UserLayout'
 import { AuthGuard } from 'src/@core/hooks/auth-guard'
+import { useAuth } from 'src/@core/hooks/use-auth'
 
 const Tab = styled(MuiTab)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -46,6 +47,9 @@ const TabName = styled('span')(({ theme }) => ({
 const AccountSettings = () => {
   // ** State
   const [value, setValue] = useState('account')
+  const user = useAuth()
+  console.log('user...',user?.user);
+  const userDetail = user?.user
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
@@ -89,7 +93,7 @@ const AccountSettings = () => {
         </TabList>
 
         <TabPanel sx={{ p: 0 }} value='account'>
-          <TabAccount />
+          <TabAccount user={userDetail} />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='security'>
           <TabSecurity />

@@ -49,6 +49,7 @@ import RegisteredTrademark from 'mdi-material-ui/RegisteredTrademark'
 import LinearProgress from '@mui/material/LinearProgress'
 import { supabase } from 'src/utils/supabaseClient'
 import { useAuth } from 'src/@core/hooks/use-auth'
+import { Loading } from 'src/Components/loading/loading'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -280,7 +281,8 @@ const LoginPage = props => {
                   {isLoading ? (
                     <>
                       <Box sx={{ width: '100%', mb: 5 }}>
-                        <LinearProgress color='error' sx={{ height: '6px' }} />
+                        {/* <LinearProgress color='error' sx={{ height: '6px' }} /> */}
+                        <Loading />
                       </Box>
                     </>
                   ) : (

@@ -76,6 +76,7 @@ export const AuthProvider = props => {
     try {
       if (!supabase.auth.getSession()) return
       const user = await getUserInfo()
+      console.log('in auth context',user);
       const {
         data: { userLogin }
       } = await supabase.auth.getUser()
