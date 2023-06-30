@@ -10,6 +10,8 @@ import AccountPlusOutline from 'mdi-material-ui/AccountPlusOutline'
 import AlertCircleOutline from 'mdi-material-ui/AlertCircleOutline'
 import GoogleCirclesExtended from 'mdi-material-ui/GoogleCirclesExtended'
 import HomeAccount from 'mdi-material-ui/HomeAccount'
+import AccountBoxMultiple from 'mdi-material-ui/AccountBoxMultiple'
+import TreasureChest from 'mdi-material-ui/TreasureChest'
 
 const navigation = () => {
   return [
@@ -24,9 +26,14 @@ const navigation = () => {
       path: '/account-settings'
     },
     {
-      title: 'Product',
-      icon: AccountCogOutline,
+      title: 'Product List',
+      icon: TreasureChest,
       path: '/products-admin'
+    },
+    {
+      title: 'List Users',
+      icon: AccountBoxMultiple,
+      path: '/list-user-admin'
     },
     {
       sectionTitle: 'Pages'

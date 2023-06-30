@@ -48,6 +48,8 @@ import _debounce from 'lodash/debounce'
 import { LoadingButton } from '@mui/lab'
 import { supabase } from 'src/utils/supabaseClient'
 import { useAuth } from 'src/@core/hooks/use-auth'
+import { Loading } from 'src/Components/loading/loading'
+import ButtonLogin from 'src/Components/button-login'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -137,17 +139,10 @@ const RegisterPage = () => {
         console.log(data)
         localStorage.setItem('USER_EMAIL', values.email)
         setIsLoading(false)
-        router.push('pages/register/verify-code')
+        router.push('login')
       } else {
         throw new Error()
       }
-
-      // setIsLoading(true)
-      // setTimeout(() => {
-      //   console.log(values)
-      //   toast.success('Register Successfully')
-      //   setIsLoading(false)
-      // }, 5000)
     } catch (err) {
       toast.error('Register Error')
       console.error(err)
@@ -306,17 +301,7 @@ const RegisterPage = () => {
               }
             />
             {isLoading ? (
-              <LoadingButton
-                loading
-                fullWidth
-                size='large'
-                loadingPosition='start'
-                startIcon={<RegisteredTrademark />}
-                variant='outlined'
-                sx={{ marginBottom: 7 }}
-              >
-                Save
-              </LoadingButton>
+              <Loading />
             ) : (
               <Button
                 fullWidth
