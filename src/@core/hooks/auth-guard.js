@@ -24,22 +24,20 @@ export const AuthGuard = (props) => {
 					})
 					.catch(console.error);
 			} else {
-				
 				const group = auth.user.role;
-				console.log('auth...',group);
-				if (role && role != group) {
-					let pathName = '/login';
-					switch (group) {
-						case 'admin':
-							pathName = 'pages/login';
-							break;
-						case 'client':
-							pathName = 'pages/login';
-							break;
-					}
-					router.replace(pathName).catch(console.error);
-					return;
-				}
+				// if (role && role != group) {
+				// 	let pathName = 'pages/login';
+				// 	switch (group) {
+				// 		case 'Admin':
+				// 			pathName = '/';
+				// 			break;
+				// 		case 'client':
+				// 			pathName = 'pages/home-page';
+				// 			break;
+				// 	}
+				// 	router.replace(pathName).catch(console.error);
+				// 	return;
+				// }
 				setChecked(true);
 			}
 		},

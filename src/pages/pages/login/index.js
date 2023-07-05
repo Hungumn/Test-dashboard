@@ -50,6 +50,7 @@ import LinearProgress from '@mui/material/LinearProgress'
 import { supabase } from 'src/utils/supabaseClient'
 import { useAuth } from 'src/@core/hooks/use-auth'
 import { Loading } from 'src/Components/loading/loading'
+import axios from 'axios'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -201,27 +202,40 @@ const LoginPage = props => {
             }}
             validationSchema={Yup.object({
               email: Yup.string().email('Valid Email').max(255).required('Email is required'),
-              password: Yup.string().required('Password is required').min(8, 'password more than 8')
+              password: Yup.string().required('Password is required').min(3, 'password more than 8')
             })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
               try {
-                setIsLoading(true)
+                // const userLogin = await axios.post('http://YashGemJewelleriesNTier-dev.eba-s5hdxxxp.ap-southeast-2.elasticbeanstalk.com/api/Accounts/login',{
+                //   username:values.email,
+                //   password:values.password
+                // })
+                // console.log('login', userLogin);
+                // setIsLoading(true)
                 const userLogin = await login(values.email, values.password)
-                if (!userLogin) {
-                  toast.error('Login failed, Please try again...')
-                  setIsLoading(false)
-                  throw new Error()
-                } else if (userLogin.role === 'admin') {
+                console.log('user in login', userLogin)
+                if (userLogin?.status == 200) {
                   toast.success('Login Success...')
-                  setIsLoading(false)
                   router.push('/')
                 } else {
-                  toast.success('Login Success...')
-                  setIsLoading(false)
-                  router.push('/home-page')
+                  throw new Error()
                 }
+                // if (!userLogin) {
+                //   toast.error('Login failed, Please try again...')
+                //   setIsLoading(false)
+                //   throw new Error()
+                // } else if (userLogin.role === 'admin') {
+                //   toast.success('Login Success...')
+                //   setIsLoading(false)
+                //   router.push('/')
+                // } else {
+                //   toast.success('Login Success...')
+                //   setIsLoading(false)
+                //   router.push('/home-page')
+                // }
               } catch (err) {
                 console.log(err)
+                toast.error('login failed')
               }
             }}
           >

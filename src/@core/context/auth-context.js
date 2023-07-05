@@ -1,7 +1,10 @@
-import { createContext, useCallback, useEffect, useReducer } from 'react'
+import { createContext, useCallback, useEffect, useReducer, useState } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from 'src/utils/supabaseClient'
 import { toast } from 'react-hot-toast'
+import axios from 'axios';
+import jwt_decode from "jwt-decode";
+import _ from 'lodash';
 
 var ActionType
 ;(function (ActionType) {
@@ -53,7 +56,9 @@ export const AuthContext = createContext({
   verifyCode: () => Promise.resolve()
 })
 
-console.log('initialState', initialState)
+
+const baseURL = process.env.NEXT_PUBLIC_URL
+console.log('URL: ', baseURL)
 
 export const AuthProvider = props => {
   const { children } = props
@@ -61,56 +66,59 @@ export const AuthProvider = props => {
   const router = useRouter()
 
   const getUserInfo = useCallback(async () => {
-    const {
-      data: { session },
-      error
-    } = await supabase.auth.getSession()
+    // const {
+    //   data: { session },
+    //   error
+    // } = await supabase.auth.getSession()
 
-    if (!session?.user) {
-      console.log('User not logged in')
-    }
-    return session?.user
+    // if (!session?.user) {
+    //   console.log('User not logged in')
+    // }
+    // return session?.user
+    const token = localStorage.getItem('TOKEN');
+    if (_.isNull(token)) return
+    const data = jwt_decode(token)
+    console.log('userInfo',data)
+    return data
   }, [])
 
   const initialize = useCallback(async () => {
     try {
-      if (!supabase.auth.getSession()) return
+      // if (!supabase.auth.getSession()) return
       const user = await getUserInfo()
       console.log('in auth context',user);
-      const {
-        data: { userLogin }
-      } = await supabase.auth.getUser()
-      console.log('data getUser', userLogin)
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`username, website, avatar_url, role`)
-        .eq('id', user?.id)
-        .limit(1)
-        .single()
-      console.log('user...', data)
-      if (data.delete_flag == 1) {
-        await logout()
-        router.replace('pages/login')
-        dispatch({
-          type: ActionType.INITIALIZE,
-          payload: {
-            isAuthenticated: false,
-            user: null
-          }
-        })
-        return
-      }
+      // const {
+      //   data: { userLogin }
+      // } = await supabase.auth.getUser()
+      // const { data, error } = await supabase
+      //   .from('profiles')
+      //   .select(`username, website, avatar_url, role`)
+      //   .eq('id', user?.id)
+      //   .limit(1)
+      //   .single()
+      // console.log('user...', data)
+      // if (data.delete_flag == 1) {
+      //   await logout()
+      //   router.replace('pages/login')
+      //   dispatch({
+      //     type: ActionType.INITIALIZE,
+      //     payload: {
+      //       isAuthenticated: false,
+      //       user: null
+      //     }
+      //   })
+      //   return
+      // }
 
       dispatch({
         type: ActionType.INITIALIZE,
         payload: {
           isAuthenticated: true,
           user: {
-            id: user.id,
-            role: data.role,
-            email: user.email,
-            avatar_url: data.avatar_url,
-            username: data.username
+            role: user.role,
+            // email: user.email,
+            // avatar_url: data.avatar_url,
+            username: user.name
           }
         }
       })
@@ -131,48 +139,56 @@ export const AuthProvider = props => {
 
   const login = async (email, password) => {
     try {
-      const user = await supabase.auth.signInWithPassword({
-        email: email,
+      // const user = await supabase.auth.signInWithPassword({
+      //   email: email,
+      //   password: password
+      // })
+      const data = await axios.post(`${baseURL}/api/Accounts/login`,{
+        username: email,
         password: password
       })
+      
+      console.log(data);
+      if (data.status == 200){
+        localStorage.setItem('TOKEN',data.data.token);
+      }
+      const dataDecoded = jwt_decode(data.data.token);
+      console.log('user in auth', dataDecoded);
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`username, website, avatar_url, role, delete_flag`)
-        .eq('id', user.data.user?.id)
-        .limit(1)
-        .single()
-      const userLogin = {
-        id: user.data.user.id,
-        role: data.role,
-        email: user.data.user.email,
-        avatar_url: data.avatar_url,
-        username: data.username
-      }
-      if (data?.delete_flag == 1) {
-        await logout()
-        dispatch({
-          type: ActionType.INITIALIZE,
-          payload: {
-            isAuthenticated: false,
-            user: null
-          }
-        })
-        return
-      }
+      // const { data, error } = await supabase
+      //   .from('profiles')
+      //   .select(`username, website, avatar_url, role, delete_flag`)
+      //   .eq('id', user.data.user?.id)
+      //   .limit(1)
+      //   .single()
+      // const userLogin = {
+      //   id: user.data.user.id,
+      //   role: data.role,
+      //   email: user.data.user.email,
+      //   avatar_url: data.avatar_url,
+      //   username: data.username
+      // }
+      // if (data?.delete_flag == 1) {
+      //   await logout()
+      //   dispatch({
+      //     type: ActionType.INITIALIZE,
+      //     payload: {
+      //       isAuthenticated: false,
+      //       user: null
+      //     }
+      //   })
+      //   return
+      // }
       dispatch({
         type: ActionType.LOGIN,
         payload: {
           user: {
-            id: user?.data?.user?.id,
-            role: data?.role,
-            email: user?.data?.user?.email,
-            avatar_url: data?.avatar_url,
-            username: data?.username
+            role: dataDecoded?.role,
+            username: dataDecoded?.name
           }
         }
       })
-      return userLogin
+      return data
     } catch (error) {
       console.log(error)
     }
