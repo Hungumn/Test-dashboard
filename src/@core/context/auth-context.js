@@ -2,9 +2,10 @@ import { createContext, useCallback, useEffect, useReducer, useState } from 'rea
 import { useRouter } from 'next/router'
 import { supabase } from 'src/utils/supabaseClient'
 import { toast } from 'react-hot-toast'
-import axios from 'axios';
-import jwt_decode from "jwt-decode";
-import _ from 'lodash';
+import axios from 'axios'
+import jwt_decode from 'jwt-decode'
+import _ from 'lodash'
+import moment from 'moment/moment'
 
 var ActionType
 ;(function (ActionType) {
@@ -56,14 +57,19 @@ export const AuthContext = createContext({
   verifyCode: () => Promise.resolve()
 })
 
-
 const baseURL = process.env.NEXT_PUBLIC_URL
-console.log('URL: ', baseURL)
 
 export const AuthProvider = props => {
   const { children } = props
   const [state, dispatch] = useReducer(reducer, initialState)
   const router = useRouter()
+
+  const checkTimeOutJWT = useCallback(async timestamp => {
+    const dateFormatted = new Date(timestamp)
+    const dateTimeNow = Date.now()
+    const dateIsBefore = moment(dateFormatted).isBefore(dateTimeNow)
+    return dateIsBefore
+  }, [])
 
   const getUserInfo = useCallback(async () => {
     // const {
@@ -75,10 +81,17 @@ export const AuthProvider = props => {
     //   console.log('User not logged in')
     // }
     // return session?.user
-    const token = localStorage.getItem('TOKEN');
+    const token = localStorage.getItem('TOKEN')
     if (_.isNull(token)) return
     const data = jwt_decode(token)
-    console.log('userInfo',data)
+    if (!checkTimeOutJWT(data?.exp)) {
+      localStorage.removeItem('TOKEN')
+      dispatch({
+        type: ActionType.LOGOUT
+      })
+      return
+    }
+
     return data
   }, [])
 
@@ -86,7 +99,7 @@ export const AuthProvider = props => {
     try {
       // if (!supabase.auth.getSession()) return
       const user = await getUserInfo()
-      console.log('in auth context',user);
+      console.log('in auth context', user)
       // const {
       //   data: { userLogin }
       // } = await supabase.auth.getUser()
@@ -143,17 +156,15 @@ export const AuthProvider = props => {
       //   email: email,
       //   password: password
       // })
-      const data = await axios.post(`${baseURL}/api/Accounts/login`,{
+      const data = await axios.post(`${baseURL}/api/Accounts/login`, {
         username: email,
         password: password
       })
-      
-      console.log(data);
-      if (data.status == 200){
-        localStorage.setItem('TOKEN',data.data.token);
+      if (data.status == 200) {
+        localStorage.setItem('TOKEN', data.data.token)
       }
-      const dataDecoded = jwt_decode(data.data.token);
-      console.log('user in auth', dataDecoded);
+      const dataDecoded = jwt_decode(data.data.token)
+      console.log('user in auth', dataDecoded)
 
       // const { data, error } = await supabase
       //   .from('profiles')
@@ -195,26 +206,30 @@ export const AuthProvider = props => {
   }
 
   const logout = async () => {
-    await supabase.auth.signOut()
+    // await supabase.auth.signOut()
+    const token = localStorage.getItem('TOKEN')
+    if (token) {
+      localStorage.removeItem('TOKEN')
+    }
     dispatch({
       type: ActionType.LOGOUT
     })
   }
 
-  const register = async (email, password, username) => {
-    console.log('in auth...', { email, password, username })
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-      options: {
-        data: {
-          username: username,
-          email: email
-        }
-      }
-    })
-    console.log({ data, error })
-    return data
+  const register = async (email, password, fullName, address, phoneNo) => {
+    try {
+      console.log('in auth...', { email, password, fullName, address, phoneNo })
+      const data = await axios.post(`${baseURL}/api/Accounts/register`, {
+        fullName: fullName,
+        password: password,
+        email: email,
+        address: address,
+        phoneNo: phoneNo
+      })
+      return data
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const verifyCode = async (email, code) => {

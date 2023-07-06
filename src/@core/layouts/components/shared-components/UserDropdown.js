@@ -22,6 +22,7 @@ import LogoutVariant from 'mdi-material-ui/LogoutVariant'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
+import { useAuth } from 'src/@core/hooks/use-auth'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -35,6 +36,9 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
+  const user = useAuth()
+  const {logout} = useAuth()
+  console.log('header...',user);
 
   // ** Hooks
   const router = useRouter()
@@ -98,9 +102,9 @@ const UserDropdown = () => {
               <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', marginLeft: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>John Doe</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{user?.user?.username}</Typography>
               <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                Admin
+                {user?.user?.role}
               </Typography>
             </Box>
           </Box>
@@ -144,7 +148,7 @@ const UserDropdown = () => {
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose('/pages/login')}>
+        <MenuItem sx={{ py: 2 }} onClick={() => {logout()}}>
           <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
           Logout
         </MenuItem>

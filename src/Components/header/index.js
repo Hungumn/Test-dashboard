@@ -6,11 +6,15 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { RootState } from 'store'
 import useOnClickOutside from 'use-onclickoutside'
+import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
+import { useAuth } from 'src/@core/hooks/use-auth'
 
 const Header = ({ isErrorPage }) => {
   const router = useRouter()
+  const [isAuth, setIsAuth] = useState(false)
   const { cartItems } = useSelector(state => state.cart)
   const arrayPaths = ['/']
+  const user = useAuth()
 
   const [onTop, setOnTop] = useState(!arrayPaths.includes(router.pathname) || isErrorPage ? false : true)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -36,6 +40,12 @@ const Header = ({ isErrorPage }) => {
       headerClass()
     }
   }, [])
+
+  useEffect(() => {
+    if (user.user?.username) {
+      setIsAuth(true)
+    }
+  }, [user])
 
   const closeMenu = () => {
     setMenuOpen(false)
@@ -85,11 +95,16 @@ const Header = ({ isErrorPage }) => {
               {cartItems.length > 0 && <span className='btn-cart__count'>{cartItems.length}</span>}
             </button>
           </Link>
-          <Link href='pages/login'>
-            <button className='site-header__btn-avatar'>
-              <i className='icon-avatar'></i>
-            </button>
-          </Link>
+          {isAuth ? (
+            <UserDropdown />
+          ) : (
+            <Link href='pages/login'>
+              <button className='site-header__btn-avatar'>
+                <i className='icon-avatar'></i>
+              </button>
+            </Link>
+          )}
+
           <button onClick={() => setMenuOpen(true)} className='site-header__btn-menu'>
             <i className='btn-hamburger'>
               <span></span>

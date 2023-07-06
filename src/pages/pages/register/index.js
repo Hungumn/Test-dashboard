@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { useState, Fragment, forwardRef } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -49,7 +49,9 @@ import { LoadingButton } from '@mui/lab'
 import { supabase } from 'src/utils/supabaseClient'
 import { useAuth } from 'src/@core/hooks/use-auth'
 import { Loading } from 'src/Components/loading/loading'
-import ButtonLogin from 'src/Components/button-login'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import axios from 'axios'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -71,14 +73,20 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
   }
 }))
 
+const CustomInput = forwardRef((props, ref) => {
+  return <TextField fullWidth {...props} inputRef={ref} label='Birth Date' autoComplete='off' />
+})
+
 const RegisterPage = () => {
   // ** States
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-
+  const [date, setDate] = useState(null)
+  const baseURL = process.env.NEXT_PUBLIC_URL
   // ** Hook
   const theme = useTheme()
   const router = useRouter()
+  const {register} = useAuth ()
 
   const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value })
@@ -96,12 +104,15 @@ const RegisterPage = () => {
 
   const formik = useFormik({
     initialValues: {
-      username: '',
+      fullName: '',
       email: '',
-      password: ''
+      password: '',
+      address:'',
+      phoneNo: '',
+      doB:'',
     },
     validationSchema: Yup.object({
-      username: Yup.string().required('username is required').nullable(),
+      fullName: Yup.string().required('username is required').nullable(),
       email: Yup.string().email('Validate of email').max(255).required('Email is required'),
       password: Yup.string().required('Password is required')
     }),
@@ -121,31 +132,20 @@ const RegisterPage = () => {
 
   const handleSubmit = async (values, setSubmitting) => {
     try {
-      // await register(values.email, values.password, values.username)
-      setIsLoading(true)
-      const { data, error } = await supabase.auth.signUp({
-        email: values.email,
+      const dataPost = {
+        fullName: values.fullName,
         password: values.password,
-        options: {
-          data: {
-            username: values.username,
-            email: values.email
-          }
-        }
-      })
-      console.log('register...', data)
-      if (data.user.id) {
-        toast.success('Register Successfully')
-        console.log(data)
-        localStorage.setItem('USER_EMAIL', values.email)
-        setIsLoading(false)
-        router.push('login')
-      } else {
-        throw new Error()
+        email: values.email,
+        address: values.address,
+        phoneNo: values.phoneNo,
+        doB: "2003-10-15"
       }
+      const data = await axios.post('http://YashGemJewelleriesNTier-dev.eba-s5hdxxxp.ap-southeast-2.elasticbeanstalk.com/api/Accounts/register', dataPost,{headers:{"Content-Type" : "application/json"}})
+      console.log('in register', data);
+      
     } catch (err) {
       toast.error('Register Error')
-      console.error(err)
+      console.log(err)
     }
   }
 
@@ -237,16 +237,16 @@ const RegisterPage = () => {
           </Box>
           <form noValidate autoComplete='off' onSubmit={formik.handleSubmit}>
             <TextField
-              error={Boolean(formik.touched.username && formik.errors.username)}
+              error={Boolean(formik.touched.fullName && formik.errors.fullName)}
               fullWidth
-              helperText={formik.touched.username && formik.errors.username}
-              label='UserName'
+              helperText={formik.touched.fullName && formik.errors.fullName}
+              label='Full Name'
               margin='normal'
-              name='username'
+              name='fullName'
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              type='email'
-              value={formik.values.username}
+              type='text'
+              value={formik.values.fullName}
               sx={{ marginBottom: 4 }}
             />
             <TextField
@@ -288,6 +288,42 @@ const RegisterPage = () => {
                   </InputAdornment>
                 )
               }}
+            />
+            <TextField
+              error={Boolean(formik.touched.address && formik.errors.address)}
+              fullWidth
+              helperText={formik.touched.address && formik.errors.address}
+              label='Address'
+              margin='normal'
+              name='address'
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              type='text'
+              value={formik.values.address}
+              sx={{ marginBottom: 4 }}
+            />
+            <TextField
+              error={Boolean(formik.touched.phoneNo && formik.errors.phoneNo)}
+              fullWidth
+              helperText={formik.touched.phoneNo && formik.errors.phoneNo}
+              label='Phone No.'
+              margin='normal'
+              name='phoneNo'
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              type='number'
+              value={formik.values.phoneNo}
+              sx={{ marginBottom: 9 }}
+            />
+            <DatePicker
+              selected={date}
+              showYearDropdown
+              showMonthDropdown
+              placeholderText='MM-DD-YYYY'
+              customInput={<CustomInput />}
+              id='form-layouts-separator-date'
+              onChange={date => setDate(date)}
+              style={{width: '100% !important'}}
             />
             <FormControlLabel
               control={<Checkbox />}

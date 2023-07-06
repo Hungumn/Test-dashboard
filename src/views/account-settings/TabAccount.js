@@ -94,7 +94,7 @@ const TabAccount = (props) => {
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label='Role'  defaultValue={user.role} disabled />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={12}>
             <TextField
               fullWidth
               type='email'
@@ -102,18 +102,6 @@ const TabAccount = (props) => {
               disabled
               defaultValue={user.email}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Role</InputLabel>
-              <Select label='Role' defaultValue='admin'>
-                <MenuItem value='admin'>Admin</MenuItem>
-                <MenuItem value='author'>Author</MenuItem>
-                <MenuItem value='editor'>Editor</MenuItem>
-                <MenuItem value='maintainer'>Maintainer</MenuItem>
-                <MenuItem value='subscriber'>Subscriber</MenuItem>
-              </Select>
-            </FormControl>
           </Grid>
           {/* <Grid item xs={12} sm={6}>
             <FormControl fullWidth>

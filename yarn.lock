@@ -3064,6 +3064,11 @@ minimist@^1.2.0, minimist@~1.2.5:
   resolved "https://registry.npmjs.org/minimist/-/minimist-1.2.5.tgz"
   integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
 
+moment@^2.29.4:
+  version "2.29.4"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
+  integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
+
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz"
@@ -3721,17 +3726,17 @@ react-cookie@^4.1.1:
     hoist-non-react-statics "^3.0.0"
     universal-cookie "^4.0.0"
 
-react-datepicker@^4.5.0:
-  version "4.7.0"
-  resolved "https://registry.npmjs.org/react-datepicker/-/react-datepicker-4.7.0.tgz"
-  integrity sha512-FS8KgbwqpxmJBv/bUdA42MYqYZa+fEYcpc746DZiHvVE2nhjrW/dg7c5B5fIUuI8gZET6FOzuDgezNcj568Czw==
+react-datepicker@^4.15.0:
+  version "4.15.0"
+  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-4.15.0.tgz#489834773fbcf87852273b4642f0c5bd3811cef7"
+  integrity sha512-kysEqVv6wRQkmAyn0wJi4Xx+JjBPBtXWfQSfh6sR3wdzZX1/LjYTPmaurnVI6ao177ecompg8ze7NCgtEGW78A==
   dependencies:
     "@popperjs/core" "^2.9.2"
     classnames "^2.2.6"
     date-fns "^2.24.0"
     prop-types "^15.7.2"
-    react-onclickoutside "^6.12.0"
-    react-popper "^2.2.5"
+    react-onclickoutside "^6.12.2"
+    react-popper "^2.3.0"
 
 react-dom@17.0.2:
   version "17.0.2"
@@ -3782,10 +3787,10 @@ react-is@^18.0.0, react-is@^18.2.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
-react-onclickoutside@^6.12.0:
-  version "6.12.1"
-  resolved "https://registry.npmjs.org/react-onclickoutside/-/react-onclickoutside-6.12.1.tgz"
-  integrity sha512-a5Q7CkWznBRUWPmocCvE8b6lEYw1s6+opp/60dCunhO+G6E4tDTO2Sd2jKE+leEnnrLAE2Wj5DlDHNqj5wPv1Q==
+react-onclickoutside@^6.12.2:
+  version "6.13.0"
+  resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.13.0.tgz#e165ea4e5157f3da94f4376a3ab3e22a565f4ffc"
+  integrity sha512-ty8So6tcUpIb+ZE+1HAhbLROvAIJYyJe/1vRrrcmW+jLsaM+/powDRqxzo6hSh9CuRZGSL1Q8mvcF5WRD93a0A==
 
 react-perfect-scrollbar@^1.5.8:
   version "1.5.8"
@@ -3799,6 +3804,14 @@ react-popper@^2.2.5:
   version "2.2.5"
   resolved "https://registry.npmjs.org/react-popper/-/react-popper-2.2.5.tgz"
   integrity sha512-kxGkS80eQGtLl18+uig1UIf9MKixFSyPxglsgLBxlYnyDf65BiY9B3nZSc6C9XUNDgStROB0fMQlTEz1KxGddw==
+  dependencies:
+    react-fast-compare "^3.0.1"
+    warning "^4.0.2"
+
+react-popper@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-2.3.0.tgz#17891c620e1320dce318bad9fede46a5f71c70ba"
+  integrity sha512-e1hj8lL3uM+sgSR4Lxzn5h1GxBlpa4CQz0XLF8kx4MDrDRWY0Ena4c97PUeSX9i5W3UAfDP0z0FXCTQkoXUl3Q==
   dependencies:
     react-fast-compare "^3.0.1"
     warning "^4.0.2"

@@ -5,7 +5,6 @@ import Footer from 'src/Components/footer';
 import Subscribe from 'src/Components/subscribe';
 
 const IndexPage = (props) => {
-  console.log(props);
   return (
     <Layout>
       <PageIntro />
