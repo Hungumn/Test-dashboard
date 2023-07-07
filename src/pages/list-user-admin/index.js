@@ -17,11 +17,11 @@ import { useEffect } from 'react'
 import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
 
 function ListUserAdmin() {
-  const {ListUserAdminFunc} = useUsersAdminFunc()
-  useEffect(() => {
-    const dataUser = ListUserAdminFunc()
-    console.log('data user',dataUser);
-  }, []);
+  // const {ListUserAdminFunc} = useUsersAdminFunc()
+  // useEffect(() => {
+  //   const dataUser = ListUserAdminFunc()
+  //   console.log('data user',dataUser);
+  // }, []);
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>

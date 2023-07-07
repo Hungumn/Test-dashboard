@@ -45,10 +45,10 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
   }
 }))
 
-const TabAccount = (props) => {
+const TabAccount = props => {
   // ** State
-  const {user} = props
-  const [openAlert, setOpenAlert] = useState(false)
+  const { user } = props
+  const [openAlert, setOpenAlert] = useState(true)
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
 
   const onChange = file => {
@@ -64,7 +64,7 @@ const TabAccount = (props) => {
     <CardContent>
       <form>
         <Grid container spacing={7}>
-          <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
+          <Grid item xs={12} sm={6} sx={{ marginTop: 4.8, marginBottom: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <ImgStyled src={imgSrc} alt='Profile Pic' />
               <Box>
@@ -87,56 +87,23 @@ const TabAccount = (props) => {
               </Box>
             </Box>
           </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Username'  defaultValue={user.username} disabled />
+          <Grid item xs={12} sm={6} sx={{ marginTop: 10, marginBottom: 3 }}>
+            <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={()=> setOpenAlert(!openAlert)}>
+              Edit
+            </Button>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Role'  defaultValue={user.role} disabled />
+            <TextField fullWidth label='Username' defaultValue={user.username} inputProps={{ readOnly: openAlert }} />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label='Role' defaultValue={user.role} inputProps={{ readOnly: true }} />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <TextField
-              fullWidth
-              type='email'
-              label='Email'
-              disabled
-              defaultValue={user.email}
-            />
+            <TextField fullWidth type='email' label='Email' inputProps={{ readOnly: openAlert }} defaultValue={user.email} />
           </Grid>
-          {/* <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select label='Status' defaultValue='active'>
-                <MenuItem value='active'>Active</MenuItem>
-                <MenuItem value='inactive'>Inactive</MenuItem>
-                <MenuItem value='pending'>Pending</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Company' placeholder='ABC Pvt. Ltd.' defaultValue='ABC Pvt. Ltd.' />
-          </Grid> */}
 
-          {openAlert ? (
-            <Grid item xs={12} sx={{ mb: 3 }}>
-              <Alert
-                severity='warning'
-                sx={{ '& a': { fontWeight: 400 } }}
-                action={
-                  <IconButton size='small' color='inherit' aria-label='close' onClick={() => setOpenAlert(false)}>
-                    <Close fontSize='inherit' />
-                  </IconButton>
-                }
-              >
-                <AlertTitle>Your email is not confirmed. Please check your inbox.</AlertTitle>
-                <Link href='/' onClick={e => e.preventDefault()}>
-                  Resend Confirmation
-                </Link>
-              </Alert>
-            </Grid>
-          ) : null}
-
-          <Grid item xs={12}>
+          {!openAlert ? (
+            <Grid item xs={12}>
             <Button variant='contained' sx={{ marginRight: 3.5 }}>
               Save Changes
             </Button>
@@ -144,6 +111,9 @@ const TabAccount = (props) => {
               Reset
             </Button>
           </Grid>
+          ) : null}
+          
+          
         </Grid>
       </form>
     </CardContent>

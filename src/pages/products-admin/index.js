@@ -9,7 +9,7 @@ function ProductAdmin() {
 }
 
 ProductAdmin.getLayout = (page) => (
-  <AuthGuard role={'admin'}>
+  <AuthGuard role={'Admin'}>
     <UserLayout>{page}</UserLayout>
   </AuthGuard>
 )

@@ -26,11 +26,11 @@ export const AuthGuard = (props) => {
 			} else {
 				const group = auth.user.role;
 				if (role && role != group) {
-					let pathName = '/login';
+					let pathName = '/pages/login';
 					switch (group) {
-						case 'Admin':
-							pathName = '/';
-							break;
+						// case 'Admin':
+						// 	pathName = '/';
+						// 	break;
 						case 'User':
 							pathName = 'home-page';
 							break;

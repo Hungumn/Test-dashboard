@@ -72,7 +72,7 @@ const AccountSettings = () => {
               </Box>
             }
           />
-          <Tab
+          {/* <Tab
             value='security'
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -80,7 +80,7 @@ const AccountSettings = () => {
                 <TabName>Security</TabName>
               </Box>
             }
-          />
+          /> */}
           <Tab
             value='info'
             label={
@@ -95,9 +95,9 @@ const AccountSettings = () => {
         <TabPanel sx={{ p: 0 }} value='account'>
           <TabAccount user={userDetail} />
         </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='security'>
+        {/* <TabPanel sx={{ p: 0 }} value='security'>
           <TabSecurity />
-        </TabPanel>
+        </TabPanel> */}
         <TabPanel sx={{ p: 0 }} value='info'>
           <TabInfo />
         </TabPanel>
