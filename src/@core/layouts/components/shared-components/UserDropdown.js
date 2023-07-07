@@ -37,8 +37,8 @@ const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
   const user = useAuth()
-  const {logout} = useAuth()
-  console.log('header...',user);
+  const { logout } = useAuth()
+  console.log('header...', user)
 
   // ** Hooks
   const router = useRouter()
@@ -148,7 +148,13 @@ const UserDropdown = () => {
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={() => {logout()}}>
+        <MenuItem
+          sx={{ py: 2 }}
+          onClick={async() => {
+            await logout()
+            router.push('/')
+          }}
+        >
           <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
           Logout
         </MenuItem>

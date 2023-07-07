@@ -211,13 +211,15 @@ const LoginPage = props => {
                 //   password:values.password
                 // })
                 // console.log('login', userLogin);
-                // setIsLoading(true)
+                setIsLoading(true)
                 const userLogin = await login(values.email, values.password)
                 console.log('user in login', userLogin)
                 if (userLogin?.status == 200) {
+                  setIsLoading(false)
                   toast.success('Login Success...')
                   router.push('/')
                 } else {
+                  setIsLoading(false)
                   throw new Error()
                 }
                 // if (!userLogin) {
@@ -235,7 +237,7 @@ const LoginPage = props => {
                 // }
               } catch (err) {
                 console.log(err)
-                toast.error('login failed')
+                toast.error('Login failed. Please try again Email or Password')
               }
             }}
           >

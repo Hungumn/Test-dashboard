@@ -19,14 +19,14 @@ export const AuthGuard = (props) => {
 			if (!auth.isAuthenticated) {
 				router
 					.push({
-						pathname: 'pages/login',
+						pathname: 'home-page',
 						query: { returnUrl: router.asPath },
 					})
 					.catch(console.error);
 			} else {
 				const group = auth.user.role;
 				if (role && role != group) {
-					let pathName = 'pages/login';
+					let pathName = '/login';
 					switch (group) {
 						case 'Admin':
 							pathName = '/';

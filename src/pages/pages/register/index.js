@@ -52,6 +52,8 @@ import { Loading } from 'src/Components/loading/loading'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import axios from 'axios'
+import moment from 'moment/moment'
+import _ from 'lodash'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -82,14 +84,20 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [date, setDate] = useState(null)
+  const [checkPolicy, setCheckPolicy] = useState(false)
   const baseURL = process.env.NEXT_PUBLIC_URL
   // ** Hook
   const theme = useTheme()
   const router = useRouter()
-  const {register} = useAuth ()
+  const { register } = useAuth()
 
-  const handleChange = prop => event => {
-    setValues({ ...values, [prop]: event.target.value })
+  const checkDOB = date => {
+    const today = new Date()
+    console.log('today...', today);
+    if (moment(date).isBefore(today)) {
+      return false
+    }
+    return true
   }
 
   const handleClickShowPassword = () => {
@@ -107,14 +115,17 @@ const RegisterPage = () => {
       fullName: '',
       email: '',
       password: '',
-      address:'',
-      phoneNo: '',
-      doB:'',
+      address: '',
+      phoneNo: ''
     },
     validationSchema: Yup.object({
       fullName: Yup.string().required('username is required').nullable(),
       email: Yup.string().email('Validate of email').max(255).required('Email is required'),
-      password: Yup.string().required('Password is required')
+      password: Yup.string().required('Password is required'),
+      phoneNo: Yup.string()
+        .max(12, 'Phone number not more than 12 number')
+        .required('Phone number is required')
+        .min(9, 'Phone number not less than 9 number')
     }),
     onSubmit: async (values, helpers) => {
       try {
@@ -132,19 +143,43 @@ const RegisterPage = () => {
 
   const handleSubmit = async (values, setSubmitting) => {
     try {
+      setIsLoading(true)
+      if (!checkPolicy) {
+        setIsLoading(false)
+        toast.error('You must agree to the new policies and terms in order to proceed with the registration.')
+        return
+      }
+
       const dataPost = {
         fullName: values.fullName,
         password: values.password,
         email: values.email,
         address: values.address,
-        phoneNo: values.phoneNo,
-        doB: "2003-10-15"
+        phoneNo: values.phoneNo.toString(),
+        doB: moment(date).unix()
       }
-      const data = await axios.post('http://YashGemJewelleriesNTier-dev.eba-s5hdxxxp.ap-southeast-2.elasticbeanstalk.com/api/Accounts/register', dataPost,{headers:{"Content-Type" : "application/json"}})
-      console.log('in register', data);
-      
+      if (_.isNaN(dataPost.doB)) {
+        setIsLoading(false)
+        toast.error('DOB is required! Please choose your DOB date')
+        return
+      }
+      if (checkDOB(date)) {
+        setIsLoading(false)
+        toast.error('The DOB cannot be a future date.')
+        return
+      }
+      const data = await register(dataPost)
+      console.log('in register', data)
+      if (data?.status === 200) {
+        setIsLoading(false)
+        toast.success(data.data.message)
+        router.push('/')
+      } else {
+        setIsLoading(false)
+        throw new Error()
+      }
     } catch (err) {
-      toast.error('Register Error')
+      toast.error('Register Error! Please check your information or Email was registered!')
       console.log(err)
     }
   }
@@ -323,10 +358,16 @@ const RegisterPage = () => {
               customInput={<CustomInput />}
               id='form-layouts-separator-date'
               onChange={date => setDate(date)}
-              style={{width: '100% !important'}}
+              style={{ width: '100% !important' }}
+              dropdownMode='select'
             />
             <FormControlLabel
               control={<Checkbox />}
+              values={checkPolicy}
+              checked={checkPolicy}
+              onChange={() => {
+                setCheckPolicy(!checkPolicy)
+              }}
               label={
                 <Fragment>
                   <span>I agree to </span>

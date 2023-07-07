@@ -216,17 +216,22 @@ export const AuthProvider = props => {
     })
   }
 
-  const register = async (email, password, fullName, address, phoneNo) => {
+  const register = async (data) => {
     try {
-      console.log('in auth...', { email, password, fullName, address, phoneNo })
-      const data = await axios.post(`${baseURL}/api/Accounts/register`, {
-        fullName: fullName,
-        password: password,
-        email: email,
-        address: address,
-        phoneNo: phoneNo
-      })
-      return data
+      console.log('in auth...', data )
+      const dataRegister = await axios.post(
+        `${baseURL}/api/Accounts/register`,
+        {
+          fullName: data.fullName,
+          password: data.password,
+          email: data.email,
+          address: data.address,
+          phoneNo: data.phoneNo,
+          doB: data.doB
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      )
+      return dataRegister
     } catch (error) {
       console.log(error)
     }

@@ -8,6 +8,7 @@ import { RootState } from 'store'
 import useOnClickOutside from 'use-onclickoutside'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import { useAuth } from 'src/@core/hooks/use-auth'
+import AccountPlusOutline from 'mdi-material-ui/AccountPlusOutline'
 
 const Header = ({ isErrorPage }) => {
   const router = useRouter()
@@ -90,7 +91,7 @@ const Header = ({ isErrorPage }) => {
             <i onClick={() => setSearchOpen(!searchOpen)} className='icon-search'></i>
           </button>
           <Link href='/cart'>
-            <button className='btn-cart'>
+            <button className='btn-cart' >
               <i className='icon-cart'></i>
               {cartItems.length > 0 && <span className='btn-cart__count'>{cartItems.length}</span>}
             </button>
@@ -98,9 +99,9 @@ const Header = ({ isErrorPage }) => {
           {isAuth ? (
             <UserDropdown />
           ) : (
-            <Link href='pages/login'>
-              <button className='site-header__btn-avatar'>
-                <i className='icon-avatar'></i>
+            <Link href='pages/register'>
+              <button className='site-header__btn-avatar' style={{fontSize:'35px'}}>
+                <AccountPlusOutline sx={{fontSize:'26px'}} />
               </button>
             </Link>
           )}
