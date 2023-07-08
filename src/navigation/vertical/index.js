@@ -51,12 +51,6 @@ const navigation = () => {
       openInNewTab: true
     },
     {
-      title: 'Error',
-      icon: AlertCircleOutline,
-      path: '/pages/error',
-      openInNewTab: true
-    },
-    {
       title: 'Index Client',
       icon: HomeAccount,
       path: '/home-page',

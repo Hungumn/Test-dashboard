@@ -8,17 +8,22 @@ export function useUsersAdminFunc() {
 
   const ListUserAdminFunc = useCallback(async () => {
     const token = localStorage.getItem('TOKEN')
+    const dataFilter = {
+      name:'',
+      page:1,
+      limit:10
+    }
     console.log('token', token)
     try {
-      const userList = await axios.get(baseURL + '/api/Accounts/filter', {
+      const userList = await axios.post(baseURL + '/api/Accounts/filter',dataFilter, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
-			console.log('userList', userList);
+
+      return userList.data.data
     } catch (err) {
       console.error(err)
-      throw err
     }
   }, [])
 

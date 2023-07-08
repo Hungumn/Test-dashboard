@@ -51,6 +51,7 @@ import { supabase } from 'src/utils/supabaseClient'
 import { useAuth } from 'src/@core/hooks/use-auth'
 import { Loading } from 'src/Components/loading/loading'
 import axios from 'axios'
+import _ from 'lodash'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -214,7 +215,7 @@ const LoginPage = props => {
                 setIsLoading(true)
                 const userLogin = await login(values.email, values.password)
                 console.log('user in login', userLogin)
-                if (userLogin?.status == 200) {
+                if (userLogin?.status == 200 && _.isNull(userLogin?.deletedDate)) {
                   setIsLoading(false)
                   toast.success('Login Success...')
                   router.push('/')
@@ -222,19 +223,6 @@ const LoginPage = props => {
                   setIsLoading(false)
                   throw new Error()
                 }
-                // if (!userLogin) {
-                //   toast.error('Login failed, Please try again...')
-                //   setIsLoading(false)
-                //   throw new Error()
-                // } else if (userLogin.role === 'admin') {
-                //   toast.success('Login Success...')
-                //   setIsLoading(false)
-                //   router.push('/')
-                // } else {
-                //   toast.success('Login Success...')
-                //   setIsLoading(false)
-                //   router.push('/home-page')
-                // }
               } catch (err) {
                 console.log(err)
                 toast.error('Login failed. Please try again Email or Password')

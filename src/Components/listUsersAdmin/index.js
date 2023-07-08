@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 // ** MUI Imports
 import Paper from '@mui/material/Paper'
@@ -10,96 +10,265 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
+import { Box, Card, Container, Grid, InputAdornment, TextField, Typography } from '@mui/material'
+import Magnify from 'mdi-material-ui/Magnify'
+import moment from 'moment'
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
+  { id: 'address', label: 'Address', minWidth: 100 },
   {
-    id: 'population',
-    label: 'Population',
+    id: 'phoneNo',
+    label: 'Phone Number',
     minWidth: 170,
     align: 'right',
     format: value => value.toLocaleString('en-US')
   },
   {
-    id: 'size',
-    label: 'Size\u00a0(km\u00b2)',
+    id: 'email',
+    label: 'Email',
     minWidth: 170,
     align: 'right',
     format: value => value.toLocaleString('en-US')
   },
   {
-    id: 'density',
-    label: 'Density',
+    id: 'birthDate',
+    label: 'Birth Date',
     minWidth: 170,
     align: 'right',
     format: value => value.toFixed(2)
+  },
+  { id: 'action', label: 'Action', minWidth: 100 }
+]
+const filterOptions = [
+  {
+    label: 'Admin',
+    value: 'admin'
+  },
+  {
+    label: 'User',
+    value: 'user'
   }
 ]
-function createData(name, code, population, size) {
-  const density = population / size
 
-  return { name, code, population, size, density }
+const applyFilters = (students, filters) => {
+  return students.filter(s => {
+    const student = s
+    console.log('in filter', student);
+    if (filters.query) {
+      let queryMatched = false
+      const properties = ['fullName']
+
+      properties.forEach(property => {
+        if (student[property].toLowerCase().includes(filters.query.toLowerCase())) {
+          queryMatched = true
+        }
+      })
+
+      if (!queryMatched) {
+        return false
+      }
+    }
+
+    if (filters.hasAcceptedMarketing && !student.hasAcceptedMarketing) {
+      return false
+    }
+
+    if (filters.isProspect && !student.isProspect) {
+      return false
+    }
+
+    if (filters.isReturning && !student.isReturning) {
+      return false
+    }
+
+    return true
+  })
 }
 
-const rows = [
-  createData('India', 'IN', 1324171354, 3287263),
-  createData('China', 'CN', 1403500365, 9596961),
-  createData('Italy', 'IT', 60483973, 301340),
-  createData('United States', 'US', 327167434, 9833520),
-  createData('Canada', 'CA', 37602103, 9984670),
-  createData('Australia', 'AU', 25475400, 7692024),
-  createData('Germany', 'DE', 83019200, 357578),
-  createData('Ireland', 'IE', 4857000, 70273),
-  createData('Mexico', 'MX', 126577691, 1972550),
-  createData('Japan', 'JP', 126317000, 377973),
-  createData('France', 'FR', 67022000, 640679),
-  createData('United Kingdom', 'GB', 67545757, 242495),
-  createData('Russia', 'RU', 146793744, 17098246),
-  createData('Nigeria', 'NG', 200962417, 923768),
-  createData('Brazil', 'BR', 210147125, 8515767)
-]
+const applyFiltersWithCourseType = (students, filters) => {
+  return students.filter(s => {
+    const student = s?.student
+    if (filters.query) {
+      let queryMatched = false
+      const properties = ['name']
 
-const ListUserAdminTable = () => {
-  // ** States
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(10)
+      properties.forEach(property => {
+        if (student[property].toLowerCase().includes(filters.query.toLowerCase())) {
+          queryMatched = true
+        }
+      })
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
+      if (!queryMatched) {
+        return false
+      }
+    }
+
+    if (filters.hasAcceptedMarketing && !student.hasAcceptedMarketing) {
+      return false
+    }
+
+    if (filters.isProspect && !student.isProspect) {
+      return false
+    }
+
+    if (filters.isReturning && !student.isReturning) {
+      return false
+    }
+
+    return true
+  })
+}
+
+const descendingComparator = (a, b, filterBy) => {
+  // When compared to something undefined, always returns false.
+  // This means that if a field does not exist from either element ('a' or 'b') the return will be 0.
+
+  if (b[filterBy] < a[filterBy]) {
+    return -1
   }
 
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(+event.target.value)
+  if (b[filterBy] > a[filterBy]) {
+    return 1
+  }
+
+  return 0
+}
+
+const getComparator = (filterDir, filterBy) =>
+  filterDir === 'desc'
+    ? (a, b) => descendingComparator(a, b, filterBy)
+    : (a, b) => -descendingComparator(a, b, filterBy)
+
+const applyFilterByStatus = (students, filterBy) => {
+  let filterByStatus
+
+  if (filterBy === 'admin') {
+    filterByStatus = students.filter(student => student?.roleName === 'Admin')
+  }
+
+  if (filterBy === 'user') {
+    filterByStatus = students.filter(student => student.roleName === 'User')
+  }
+
+  return filterByStatus
+}
+
+const applyPagination = (students, page, rowsPerPage) =>
+  students.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+
+const ListUserAdminTable = props => {
+  const queryRef = useRef(null)
+  // ** States
+  const [page, setPage] = useState(0)
+  const [filter, setFilter] = useState(filterOptions[1].value)
+  const [filters, setFilters] = useState({
+    query: '',
+    hasAcceptedMarketing: undefined,
+    isProspect: undefined,
+    isReturning: undefined
+  })
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const { clients } = props
+
+  const handleQueryChange = event => {
+    event.preventDefault()
+    setFilters(prevState => ({
+      ...prevState,
+      query: queryRef.current?.value
+    }))
     setPage(0)
   }
 
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage)
+  }
+
+  const handleFilterChange = event => {
+    setPage(0)
+    setFilter(event.target.value)
+  }
+
+  const handleRowsPerPageChange = event => {
+    setRowsPerPage(parseInt(event.target.value, 10))
+  }
+
+  const filteredStudents = applyFilters(clients, filters)
+  const filteredByStatus = applyFilterByStatus(filteredStudents, filter)
+  const paginatedStudents = applyPagination(filteredByStatus, page, rowsPerPage)
+  console.log('filter', { filteredStudents, filteredByStatus, paginatedStudents })
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          flexWrap: 'wrap',
+          m: -1.5,
+          p: 3
+        }}
+      >
+        <Box
+          component='form'
+          onSubmit={handleQueryChange}
+          sx={{
+            flexGrow: 1,
+            m: 1.5
+          }}
+        >
+          <TextField
+            size={'small'}
+            defaultValue=''
+            fullWidth
+            inputProps={{ ref: queryRef }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Magnify fontSize='small' />
+                </InputAdornment>
+              )
+            }}
+            placeholder='Search'
+          />
+        </Box>
+        <TextField
+          size={'small'}
+          label={' Filter By'}
+          name='filter'
+          onChange={handleFilterChange}
+          select
+          SelectProps={{ native: true }}
+          sx={{ m: 1.5 }}
+          value={filter}
+        >
+          {filterOptions.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </TextField>
+      </Box>
       <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader >
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               {columns.map(column => (
-                <TableCell key={column.id} align={column.align} sx={{ minWidth: column.minWidth }}>
+                <TableCell key={column.id} align={'left'} sx={{ minWidth: column.minWidth }}>
                   {column.label}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
+            {paginatedStudents.map((item, index) => {
               return (
-                <TableRow hover role='checkbox' tabIndex={-1} key={row.code}>
-                  {columns.map(column => {
-                    const value = row[column.id]
-
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === 'number' ? column.format(value) : value}
-                      </TableCell>
-                    )
-                  })}
+                <TableRow key={item.accountId}>
+                  <TableCell align={'left'}>{item.fullName}</TableCell>
+                  <TableCell align={'left'}>{item.address}</TableCell>
+                  <TableCell align={'left'}>{item.phoneNo}</TableCell>
+                  <TableCell align={'left'}>{item.email}</TableCell>
+                  <TableCell align={'left'}>{moment.unix(item.doB).format("MM/DD/YYYY")}</TableCell>
                 </TableRow>
               )
             })}
@@ -109,11 +278,11 @@ const ListUserAdminTable = () => {
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component='div'
-        count={rows.length}
+        count={filteredByStatus.length}
         rowsPerPage={rowsPerPage}
         page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
       />
     </Paper>
   )

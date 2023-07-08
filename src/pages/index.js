@@ -28,9 +28,6 @@ import { AuthGuard } from 'src/@core/hooks/auth-guard'
 
 const Dashboard = props => {
   const user = useAuth()
-  useEffect(() => {
-    console.log('role', user)
-  }, [])
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>
@@ -106,9 +103,9 @@ const Dashboard = props => {
   )
 }
 Dashboard.getLayout = (page) => (
-  <AuthGuard role={'Admin'}>
+
     <UserLayout>{page}</UserLayout>
-  </AuthGuard>
+
 )
 
 export default Dashboard

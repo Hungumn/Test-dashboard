@@ -48,9 +48,9 @@ const AccountSettings = () => {
   // ** State
   const [value, setValue] = useState('account')
   const user = useAuth()
-  console.log('user...',user?.user);
-  const userDetail = user?.user
 
+  const userDetail = user?.user
+  console.log('user...', userDetail)
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
@@ -81,7 +81,7 @@ const AccountSettings = () => {
               </Box>
             }
           /> */}
-          <Tab
+          {/* <Tab
             value='info'
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -89,7 +89,7 @@ const AccountSettings = () => {
                 <TabName>Info</TabName>
               </Box>
             }
-          />
+          /> */}
         </TabList>
 
         <TabPanel sx={{ p: 0 }} value='account'>
@@ -98,15 +98,15 @@ const AccountSettings = () => {
         {/* <TabPanel sx={{ p: 0 }} value='security'>
           <TabSecurity />
         </TabPanel> */}
-        <TabPanel sx={{ p: 0 }} value='info'>
+        {/* <TabPanel sx={{ p: 0 }} value='info'>
           <TabInfo />
-        </TabPanel>
+        </TabPanel> */}
       </TabContext>
     </Card>
   )
 }
 
-AccountSettings.getLayout = (page) => (
+AccountSettings.getLayout = page => (
   <AuthGuard>
     <UserLayout>{page}</UserLayout>
   </AuthGuard>

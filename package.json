@@ -87,6 +87,7 @@
     "sass": "^1.63.6",
     "swiper": "6.5.1",
     "swr": "^2.2.0",
+    "unsplash-js": "^7.0.18",
     "use-onclickoutside": "^0.4.1",
     "yup": "^1.2.0"
   },

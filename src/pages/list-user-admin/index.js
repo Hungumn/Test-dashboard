@@ -15,13 +15,16 @@ import TableCustomized from 'src/views/tables/TableCustomized'
 import ListUserAdminTable from 'src/Components/listUsersAdmin'
 import { useEffect } from 'react'
 import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
+import { useState } from 'react'
 
 function ListUserAdmin() {
-  // const {ListUserAdminFunc} = useUsersAdminFunc()
-  // useEffect(() => {
-  //   const dataUser = ListUserAdminFunc()
-  //   console.log('data user',dataUser);
-  // }, []);
+  const { ListUserAdminFunc } = useUsersAdminFunc()
+  const [clients, setClients] = useState([])
+  useEffect(async () => {
+    const dataUser = await ListUserAdminFunc()
+    setClients(dataUser)
+    console.log('data user...', dataUser)
+  }, [])
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -34,8 +37,8 @@ function ListUserAdmin() {
       </Grid>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Sticky Header' titleTypographyProps={{ variant: 'h6' }} />
-          <ListUserAdminTable />
+          <CardHeader />
+          <ListUserAdminTable clients={clients} />
         </Card>
       </Grid>
     </Grid>

@@ -20,6 +20,7 @@ import Button from '@mui/material/Button'
 
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
+import moment from 'moment/moment'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -50,6 +51,7 @@ const TabAccount = props => {
   const { user } = props
   const [openAlert, setOpenAlert] = useState(true)
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
+  const [avatarFile, setAvatarFile] = useState()
 
   const onChange = file => {
     const reader = new FileReader()
@@ -58,7 +60,15 @@ const TabAccount = props => {
       reader.onload = () => setImgSrc(reader.result)
       reader.readAsDataURL(files[0])
     }
+    console.log('file', files[0])
   }
+
+  // const onChange = async (file) => {
+  // 	const avatarURL = URL.createObjectURL(file);
+  // 	console.log('file', file);
+  // 	console.log('avatarURL', avatarURL);
+  // 	setAvatarFile(file);
+  // };
 
   return (
     <CardContent>
@@ -88,7 +98,7 @@ const TabAccount = props => {
             </Box>
           </Grid>
           <Grid item xs={12} sm={6} sx={{ marginTop: 10, marginBottom: 3 }}>
-            <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={()=> setOpenAlert(!openAlert)}>
+            <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={() => setOpenAlert(!openAlert)}>
               Edit
             </Button>
           </Grid>
@@ -98,22 +108,52 @@ const TabAccount = props => {
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label='Role' defaultValue={user.role} inputProps={{ readOnly: true }} />
           </Grid>
-          <Grid item xs={12} sm={12}>
-            <TextField fullWidth type='email' label='Email' inputProps={{ readOnly: openAlert }} defaultValue={user.email} />
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              type='email'
+              label='Email'
+              inputProps={{ readOnly: true }}
+              defaultValue={user.email}
+            />
           </Grid>
-
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              type='text'
+              label='Bird Date'
+              inputProps={{ readOnly: true }}
+              defaultValue={moment.unix(user.doB).format("MM/DD/YYYY")}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              type='text'
+              label='Phone'
+              inputProps={{ readOnly: openAlert }}
+              defaultValue={user.phone}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              type='text'
+              label='Address'
+              inputProps={{ readOnly: openAlert }}
+              defaultValue={user.add}
+            />
+          </Grid>
           {!openAlert ? (
             <Grid item xs={12}>
-            <Button variant='contained' sx={{ marginRight: 3.5 }}>
-              Save Changes
-            </Button>
-            <Button type='reset' variant='outlined' color='secondary'>
-              Reset
-            </Button>
-          </Grid>
+              <Button variant='contained' sx={{ marginRight: 3.5 }}>
+                Save Changes
+              </Button>
+              <Button type='reset' variant='outlined' color='secondary'>
+                Reset
+              </Button>
+            </Grid>
           ) : null}
-          
-          
         </Grid>
       </form>
     </CardContent>

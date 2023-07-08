@@ -82,6 +82,12 @@ export const AuthProvider = props => {
     // }
     // return session?.user
     const token = localStorage.getItem('TOKEN')
+    const userId = localStorage.getItem('USER')
+    const user = await axios.get(`${baseURL}/api/Accounts/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     if (_.isNull(token)) return
     const data = jwt_decode(token)
     if (!checkTimeOutJWT(data?.exp)) {
@@ -91,15 +97,22 @@ export const AuthProvider = props => {
       })
       return
     }
-
-    return data
+    if (!_.isNull(user.data.deletedDate)){
+      localStorage.removeItem('TOKEN')
+      localStorage.removeItem('USER')
+      dispatch({
+        type: ActionType.LOGOUT
+      })
+      return
+    }
+    return user.data
   }, [])
 
   const initialize = useCallback(async () => {
     try {
       // if (!supabase.auth.getSession()) return
       const user = await getUserInfo()
-      console.log('in auth context', user)
+      // console.log('user in auth...',user);
       // const {
       //   data: { userLogin }
       // } = await supabase.auth.getUser()
@@ -128,10 +141,14 @@ export const AuthProvider = props => {
         payload: {
           isAuthenticated: true,
           user: {
-            role: user.role,
-            // email: user.email,
+            id:user.accountId,
+            email: user.email,
+            doB:user.doB,
+            role: user.roleName,
             // avatar_url: data.avatar_url,
-            username: user.name
+            username: user.fullName,
+            phone: user.phoneNo,
+            add:user.address
           }
         }
       })
@@ -161,10 +178,16 @@ export const AuthProvider = props => {
         password: password
       })
       if (data.status == 200) {
-        localStorage.setItem('TOKEN', data.data.token)
+        localStorage.setItem('TOKEN', data.data.data.token)
       }
-      const dataDecoded = jwt_decode(data.data.token)
-      console.log('user in auth', dataDecoded)
+      const userId = data.data.data.accountId
+
+      if (userId) {
+        localStorage.setItem('USER', userId)
+      }
+      const dataResponse = data.data.data
+      const status = data.status
+      const returnData = { ...dataResponse, status }
 
       // const { data, error } = await supabase
       //   .from('profiles')
@@ -194,31 +217,42 @@ export const AuthProvider = props => {
         type: ActionType.LOGIN,
         payload: {
           user: {
-            role: dataDecoded?.role,
-            username: dataDecoded?.name
+            id: dataResponse?.accountId,
+            role: dataResponse?.roleName,
+            username: dataResponse?.fullName,
+            email: dataResponse?.email,
+            doB: dataResponse?.doB,
+            phone: dataResponse?.phoneNo,
+            add:dataResponse?.address
           }
         }
       })
-      return data
+
+      return returnData
     } catch (error) {
       console.log(error)
+      return error.response
     }
   }
 
   const logout = async () => {
     // await supabase.auth.signOut()
     const token = localStorage.getItem('TOKEN')
+    const userId = localStorage.getItem('USER')
     if (token) {
       localStorage.removeItem('TOKEN')
+    }
+    if (userId) {
+      localStorage.removeItem('USER')
     }
     dispatch({
       type: ActionType.LOGOUT
     })
   }
 
-  const register = async (data) => {
+  const register = async data => {
     try {
-      console.log('in auth...', data )
+      console.log('in auth...', data)
       const dataRegister = await axios.post(
         `${baseURL}/api/Accounts/register`,
         {

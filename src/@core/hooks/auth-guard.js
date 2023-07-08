@@ -6,8 +6,6 @@ import { useAuth } from './use-auth';
 export const AuthGuard = (props) => {
 	const { children, role } = props;
 	const auth = useAuth();
-	console.log('auth...',auth);
-	console.log('role in auth guard...',role);
 	const router = useRouter();
 	const [checked, setChecked] = useState(false);
 
