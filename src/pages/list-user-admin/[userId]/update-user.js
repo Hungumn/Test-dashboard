@@ -50,7 +50,7 @@ const DetailTypographyStyled = styled(Typography)(({ theme }) => ({
   }
 }))
 
-const UserDetailAdmin = () => {
+const UpdateUserDetailAdmin = () => {
   // ** State
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
   const [user, setUser] = useState()
@@ -74,16 +74,6 @@ const UserDetailAdmin = () => {
 
   console.log(user)
 
-  const onChange = file => {
-    const reader = new FileReader()
-    const { files } = file.target
-    if (files && files.length !== 0) {
-      reader.onload = () => setImgSrc(reader.result)
-      reader.readAsDataURL(files[0])
-    }
-    console.log('file', files[0])
-  }
-
   return (
     <Card>
       <CardContent>
@@ -98,20 +88,6 @@ const UserDetailAdmin = () => {
               >
                 Back
               </Button>
-              <Button
-                variant='contained'
-                sx={{ marginRight: 3.5,float: 'right' }}
-                onClick={() => router.push(`${userId}/update-user`)}
-                startIcon={<StepForward2 />}
-                
-              >
-                Update
-              </Button>
-            </Grid>
-            <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <ImgStyled src={imgSrc} alt='Profile Pic' />
-              </Box>
             </Grid>
 
             <Grid item xs={12} sm={6}>
@@ -145,9 +121,9 @@ const UserDetailAdmin = () => {
   )
 }
 
-UserDetailAdmin.getLayout = page => (
+UpdateUserDetailAdmin.getLayout = page => (
   <AuthGuard>
     <UserLayout>{page}</UserLayout>
   </AuthGuard>
 )
-export default UserDetailAdmin
+export default UpdateUserDetailAdmin
