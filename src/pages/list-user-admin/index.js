@@ -20,11 +20,12 @@ import { useState } from 'react'
 function ListUserAdmin() {
   const { ListUserAdminFunc } = useUsersAdminFunc()
   const [clients, setClients] = useState([])
+  const [render, setRender] = useState(false)
   useEffect(async () => {
     const dataUser = await ListUserAdminFunc()
     setClients(dataUser)
     console.log('data user...', dataUser)
-  }, [])
+  }, [render])
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -38,7 +39,7 @@ function ListUserAdmin() {
       <Grid item xs={12}>
         <Card>
           <CardHeader />
-          <ListUserAdminTable clients={clients} />
+          <ListUserAdminTable clients={clients} setRender={setRender} render={render} />
         </Card>
       </Grid>
     </Grid>

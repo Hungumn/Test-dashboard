@@ -93,7 +93,6 @@ const RegisterPage = () => {
 
   const checkDOB = date => {
     const today = new Date()
-    console.log('today...', today);
     if (moment(date).isBefore(today)) {
       return false
     }
@@ -173,7 +172,7 @@ const RegisterPage = () => {
       if (data?.status === 200) {
         setIsLoading(false)
         toast.success(data.data.message)
-        router.push('/')
+        // router.push('/pages/login')
       } else {
         setIsLoading(false)
         throw new Error()

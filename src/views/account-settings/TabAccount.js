@@ -49,6 +49,7 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 const TabAccount = props => {
   // ** State
   const { user } = props
+  console.log('props...',user);
   const [openAlert, setOpenAlert] = useState(true)
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
   const [avatarFile, setAvatarFile] = useState()
@@ -103,10 +104,10 @@ const TabAccount = props => {
             </Button>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Username' defaultValue={user.username} inputProps={{ readOnly: openAlert }} />
+            <TextField fullWidth label='Username' defaultValue={user?.fullName} inputProps={{ readOnly: openAlert }} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Role' defaultValue={user.role} inputProps={{ readOnly: true }} />
+            <TextField fullWidth label='Role' defaultValue={user?.roleName} inputProps={{ readOnly: true }} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -114,7 +115,7 @@ const TabAccount = props => {
               type='email'
               label='Email'
               inputProps={{ readOnly: true }}
-              defaultValue={user.email}
+              defaultValue={user?.email}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -123,7 +124,7 @@ const TabAccount = props => {
               type='text'
               label='Bird Date'
               inputProps={{ readOnly: true }}
-              defaultValue={moment.unix(user.doB).format("MM/DD/YYYY")}
+              defaultValue={moment.unix(user?.doB).format("MM/DD/YYYY")}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -132,7 +133,7 @@ const TabAccount = props => {
               type='text'
               label='Phone'
               inputProps={{ readOnly: openAlert }}
-              defaultValue={user.phone}
+              defaultValue={user?.phone}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -141,7 +142,7 @@ const TabAccount = props => {
               type='text'
               label='Address'
               inputProps={{ readOnly: openAlert }}
-              defaultValue={user.add}
+              defaultValue={user?.add}
             />
           </Grid>
           {!openAlert ? (

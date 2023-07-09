@@ -1,21 +1,19 @@
 import axios from 'axios'
 import { useState, useEffect, useCallback } from 'react'
 import login from 'src/pages/api/login'
-import { supabase } from 'src/utils/supabaseClient'
 
 export function useUsersAdminFunc() {
   const baseURL = process.env.NEXT_PUBLIC_URL
+  const token = localStorage.getItem('TOKEN')
 
   const ListUserAdminFunc = useCallback(async () => {
-    const token = localStorage.getItem('TOKEN')
     const dataFilter = {
-      name:'',
-      page:1,
-      limit:10
+      name: '',
+      page: 1,
+      limit: 1000
     }
-    console.log('token', token)
     try {
-      const userList = await axios.post(baseURL + '/api/Accounts/filter',dataFilter, {
+      const userList = await axios.post(baseURL + '/api/Accounts/filter', dataFilter, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -27,7 +25,38 @@ export function useUsersAdminFunc() {
     }
   }, [])
 
+  const deleteUserAdminFunc = useCallback(async (userId) => {
+    const dataFilter = [userId]
+    try {
+      const user = await axios.post(baseURL + '/api/Accounts/delete', dataFilter, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      console.log('respond',user.status);
+      return user.status
+    } catch (err) {
+      console.error(err)
+    }
+  }, [])
+
+  const detailUserAdminFunc = useCallback(async (userId) => {
+    try {
+      const user = await axios.get(`${baseURL}/api/Accounts/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      console.log('respond',user);
+      return user.data
+    } catch (err) {
+      console.error(err)
+    }
+  }, [])
+
   return {
-    ListUserAdminFunc
+    ListUserAdminFunc,
+    deleteUserAdminFunc,
+    detailUserAdminFunc
   }
 }

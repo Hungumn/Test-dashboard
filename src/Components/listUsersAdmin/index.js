@@ -10,9 +10,15 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
-import { Box, Card, Container, Grid, InputAdornment, TextField, Typography } from '@mui/material'
+import { Box, Button, IconButton, InputAdornment, Modal, TextField, Typography } from '@mui/material'
 import Magnify from 'mdi-material-ui/Magnify'
 import moment from 'moment'
+import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
+import { toast } from 'react-hot-toast'
+import NextLink from 'next/link';
+import ArrowRightBoldBox from 'mdi-material-ui/ArrowRightBoldBox'
+import { useRouter } from 'next/router'
+
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170 },
@@ -40,6 +46,18 @@ const columns = [
   },
   { id: 'action', label: 'Action', minWidth: 100 }
 ]
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  p: 4,
+  borderRadius: '8px'
+}
+
 const filterOptions = [
   {
     label: 'Admin',
@@ -54,7 +72,6 @@ const filterOptions = [
 const applyFilters = (students, filters) => {
   return students.filter(s => {
     const student = s
-    console.log('in filter', student);
     if (filters.query) {
       let queryMatched = false
       const properties = ['fullName']
@@ -159,8 +176,12 @@ const applyPagination = (students, page, rowsPerPage) =>
 
 const ListUserAdminTable = props => {
   const queryRef = useRef(null)
+  const { deleteUserAdminFunc } = useUsersAdminFunc()
+  const router = useRouter()
   // ** States
   const [page, setPage] = useState(0)
+  const [userSelected, setUserSelected] = useState([])
+  const [openModal, setOpenModal] = useState(false)
   const [filter, setFilter] = useState(filterOptions[1].value)
   const [filters, setFilters] = useState({
     query: '',
@@ -169,7 +190,7 @@ const ListUserAdminTable = props => {
     isReturning: undefined
   })
   const [rowsPerPage, setRowsPerPage] = useState(10)
-  const { clients } = props
+  const { clients, setRender, render } = props
 
   const handleQueryChange = event => {
     event.preventDefault()
@@ -193,10 +214,11 @@ const ListUserAdminTable = props => {
     setRowsPerPage(parseInt(event.target.value, 10))
   }
 
+  const handleCloseModal = () => setOpenModal(false)
+
   const filteredStudents = applyFilters(clients, filters)
   const filteredByStatus = applyFilterByStatus(filteredStudents, filter)
   const paginatedStudents = applyPagination(filteredByStatus, page, rowsPerPage)
-  console.log('filter', { filteredStudents, filteredByStatus, paginatedStudents })
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -232,6 +254,47 @@ const ListUserAdminTable = props => {
             placeholder='Search'
           />
         </Box>
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby='modal-modal-title'
+          aria-describedby='modal-modal-description'
+        >
+          <Box sx={modalStyle}>
+            <Typography id='modal-modal-title' variant='h4' component='h2' align='center'>
+              Are you sure ？
+            </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '18px',
+                mt: 2.5
+              }}
+            >
+              <Button variant='outlined' onClick={handleCloseModal}>
+                Cancel
+              </Button>
+              <Button
+                variant='contained'
+                onClick={async () => {
+                  console.log('user selected', userSelected)
+                  const deleteUser = await deleteUserAdminFunc(userSelected)
+                  if (deleteUser == 200) {
+                    toast.success('Delete Success!')
+                  } else {
+                    toast.error('Delete Error! Try again')
+                  }
+                  setOpenModal(!openModal)
+                  setRender(!render)
+                }}
+              >
+                Agree
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
         <TextField
           size={'small'}
           label={' Filter By'}
@@ -249,7 +312,7 @@ const ListUserAdminTable = props => {
           ))}
         </TextField>
       </Box>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: 800 }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
@@ -268,7 +331,44 @@ const ListUserAdminTable = props => {
                   <TableCell align={'left'}>{item.address}</TableCell>
                   <TableCell align={'left'}>{item.phoneNo}</TableCell>
                   <TableCell align={'left'}>{item.email}</TableCell>
-                  <TableCell align={'left'}>{moment.unix(item.doB).format("MM/DD/YYYY")}</TableCell>
+                  <TableCell align={'left'}>{moment.unix(item.doB).format('MM/DD/YYYY')}</TableCell>
+                  <TableCell align={'left'}>
+                    <Button
+                      variant='contained'
+                      sx={{
+                        color: '#FFF !important',
+                        borderRadius: '10px',
+                        backgroundColor: '#ff4c51',
+                        '&:hover': {
+                          backgroundColor: '#ff4c51'
+                        }
+                      }}
+                      onClick={() => {
+                        setOpenModal(true)
+                        setUserSelected(item.accountId)
+                      }}
+                      disabled={item.roleName == 'Admin'}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      variant='contained'
+                      sx={{
+                        color: '#FFF !important',
+                        borderRadius: '10px',
+                        backgroundColor: '#429AEB',
+                        '&:hover': {
+                          backgroundColor: '#429AEB'
+                        },
+                        marginLeft:'8px'
+                      }}
+                      onClick={() => {
+                        router.push(`list-user-admin/${item?.accountId}`)
+                      }}
+                    >
+                      Detail
+                    </Button>
+                  </TableCell>
                 </TableRow>
               )
             })}
