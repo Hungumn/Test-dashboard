@@ -16,7 +16,9 @@ import moment from 'moment'
 import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
 import { toast } from 'react-hot-toast'
 import NextLink from 'next/link';
-import ArrowRightBoldBox from 'mdi-material-ui/ArrowRightBoldBox'
+import CloseCircleOutline from 'mdi-material-ui/CloseCircleOutline'
+import ArrowRightCircle from 'mdi-material-ui/ArrowRightCircle'
+
 import { useRouter } from 'next/router'
 
 
@@ -333,14 +335,14 @@ const ListUserAdminTable = props => {
                   <TableCell align={'left'}>{item.email}</TableCell>
                   <TableCell align={'left'}>{moment.unix(item.doB).format('MM/DD/YYYY')}</TableCell>
                   <TableCell align={'left'}>
-                    <Button
-                      variant='contained'
+                    <IconButton 
+                      variant='outlined' 
                       sx={{
-                        color: '#FFF !important',
+                        color: '#ff4c51 !important',
                         borderRadius: '10px',
-                        backgroundColor: '#ff4c51',
                         '&:hover': {
-                          backgroundColor: '#ff4c51'
+                          backgroundColor: 'transparent',
+                          transform:'scale(1.2)'
                         }
                       }}
                       onClick={() => {
@@ -348,26 +350,26 @@ const ListUserAdminTable = props => {
                         setUserSelected(item.accountId)
                       }}
                       disabled={item.roleName == 'Admin'}
+                      
                     >
-                      Delete
-                    </Button>
-                    <Button
+                      <CloseCircleOutline/>
+                    </IconButton>
+                    <IconButton
                       variant='contained'
                       sx={{
-                        color: '#FFF !important',
+                        color: '#429AEB !important',
                         borderRadius: '10px',
-                        backgroundColor: '#429AEB',
                         '&:hover': {
-                          backgroundColor: '#429AEB'
+                          backgroundColor: 'transparent',
+                          transform:'scale(1.2)'
                         },
-                        marginLeft:'8px'
                       }}
                       onClick={() => {
                         router.push(`list-user-admin/${item?.accountId}`)
                       }}
                     >
-                      Detail
-                    </Button>
+                      <ArrowRightCircle/>
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               )

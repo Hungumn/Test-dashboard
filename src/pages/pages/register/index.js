@@ -118,9 +118,10 @@ const RegisterPage = () => {
       phoneNo: ''
     },
     validationSchema: Yup.object({
-      fullName: Yup.string().required('username is required').nullable(),
+      fullName: Yup.string().required('Username is required').nullable(),
       email: Yup.string().email('Validate of email').max(255).required('Email is required'),
       password: Yup.string().required('Password is required'),
+      address: Yup.string().required('Address is required').nullable(),
       phoneNo: Yup.string()
         .max(12, 'Phone number not more than 12 number')
         .required('Phone number is required')
