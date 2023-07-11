@@ -54,9 +54,25 @@ export function useUsersAdminFunc() {
     }
   }, [])
 
+  const updateUserAdminFunc = useCallback(async (userId,dataUpdate) => {
+    try {
+      console.log('data post update', dataUpdate)
+      const data = await axios.post(`${baseURL}/api/Accounts/update/${userId}`, dataUpdate, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      console.log('respond',data);
+      return data.status
+    } catch (err) {
+      console.error(err)
+    }
+  }, [])
+
   return {
     ListUserAdminFunc,
     deleteUserAdminFunc,
-    detailUserAdminFunc
+    detailUserAdminFunc,
+    updateUserAdminFunc
   }
 }

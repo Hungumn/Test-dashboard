@@ -29,6 +29,7 @@ import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
 import { useRouter } from 'next/router'
 import { Button, CardContent, Chip, Grid, TextField, Typography } from '@mui/material'
 import moment from 'moment/moment'
+import _ from 'lodash'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -55,41 +56,31 @@ const UserDetailAdmin = () => {
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
   const [user, setUser] = useState()
   const [render, setRender] = useState(false)
-  const [openAlert, setOpenAlert] = useState(true)
+  const [avatarURL, setAvatarURL] = useState()
   const { detailUserAdminFunc } = useUsersAdminFunc()
   const router = useRouter()
   const userId = router.query.userId
-  console.log(userId)
+  const path = process.env.NEXT_PUBLIC_S3_URL
 
   useEffect(async () => {
     const userDetail = await detailUserAdminFunc(userId)
     if (userDetail) {
       setUser(userDetail)
+      if (_.isNull(userDetail.avatar) || _.isEmpty(userDetail.avatar)) {
+        setImgSrc('/images/avatars/1.png')
+      } else {
+        setImgSrc(`${path}${userDetail?.avatar}`)
+      }
     }
-    console.log('user detail...', userDetail)
+    console.log('user detail...', avatarURL)
   }, [render])
-  const handleChange = (event, newValue) => {
-    setValue(newValue)
-  }
-
-  console.log(user)
-
-  const onChange = file => {
-    const reader = new FileReader()
-    const { files } = file.target
-    if (files && files.length !== 0) {
-      reader.onload = () => setImgSrc(reader.result)
-      reader.readAsDataURL(files[0])
-    }
-    console.log('file', files[0])
-  }
 
   return (
     <Card>
       <CardContent>
         <form>
           <Grid container spacing={7}>
-            <Grid item xs={12} sx={{ marginTop: 10, marginBottom: 3 }} >
+            <Grid item xs={12} sx={{ marginTop: 10, marginBottom: 3 }}>
               <Button
                 variant='contained'
                 sx={{ marginRight: 3.5 }}
@@ -100,10 +91,9 @@ const UserDetailAdmin = () => {
               </Button>
               <Button
                 variant='contained'
-                sx={{ marginRight: 3.5,float: 'right' }}
+                sx={{ marginRight: 3.5, float: 'right' }}
                 onClick={() => router.push(`${userId}/update-user`)}
                 startIcon={<StepForward2 />}
-                
               >
                 Update
               </Button>

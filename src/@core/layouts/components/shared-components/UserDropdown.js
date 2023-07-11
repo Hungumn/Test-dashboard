@@ -38,8 +38,7 @@ const UserDropdown = () => {
   const [anchorEl, setAnchorEl] = useState(null)
   const user = useAuth()
   const { logout } = useAuth()
-  console.log('header...', user)
-
+  
   // ** Hooks
   const router = useRouter()
 

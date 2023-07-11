@@ -10,7 +10,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
-import { Box, Button, IconButton, InputAdornment, Modal, TextField, Typography } from '@mui/material'
+import { Box, Button, IconButton, InputAdornment, Modal, TextField, Typography, Avatar } from '@mui/material'
 import Magnify from 'mdi-material-ui/Magnify'
 import moment from 'moment'
 import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
@@ -20,9 +20,11 @@ import CloseCircleOutline from 'mdi-material-ui/CloseCircleOutline'
 import ArrowRightCircle from 'mdi-material-ui/ArrowRightCircle'
 
 import { useRouter } from 'next/router'
+import { getInitials } from 'src/@core/utils/get-initials'
 
 
 const columns = [
+  {id:'avatar', minWidth:100},
   { id: 'name', label: 'Name', minWidth: 170 },
   { id: 'address', label: 'Address', minWidth: 100 },
   {
@@ -105,40 +107,6 @@ const applyFilters = (students, filters) => {
   })
 }
 
-const applyFiltersWithCourseType = (students, filters) => {
-  return students.filter(s => {
-    const student = s?.student
-    if (filters.query) {
-      let queryMatched = false
-      const properties = ['name']
-
-      properties.forEach(property => {
-        if (student[property].toLowerCase().includes(filters.query.toLowerCase())) {
-          queryMatched = true
-        }
-      })
-
-      if (!queryMatched) {
-        return false
-      }
-    }
-
-    if (filters.hasAcceptedMarketing && !student.hasAcceptedMarketing) {
-      return false
-    }
-
-    if (filters.isProspect && !student.isProspect) {
-      return false
-    }
-
-    if (filters.isReturning && !student.isReturning) {
-      return false
-    }
-
-    return true
-  })
-}
-
 const descendingComparator = (a, b, filterBy) => {
   // When compared to something undefined, always returns false.
   // This means that if a field does not exist from either element ('a' or 'b') the return will be 0.
@@ -192,7 +160,9 @@ const ListUserAdminTable = props => {
     isReturning: undefined
   })
   const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
   const { clients, setRender, render } = props
+  const path = process.env.NEXT_PUBLIC_S3_URL
 
   const handleQueryChange = event => {
     event.preventDefault()
@@ -329,6 +299,7 @@ const ListUserAdminTable = props => {
             {paginatedStudents.map((item, index) => {
               return (
                 <TableRow key={item.accountId}>
+                   <TableCell align={'left'}><Avatar src={`${path}${item.avatar}`}>{getInitials(item?.fullName || 'User')}</Avatar></TableCell>
                   <TableCell align={'left'}>{item.fullName}</TableCell>
                   <TableCell align={'left'}>{item.address}</TableCell>
                   <TableCell align={'left'}>{item.phoneNo}</TableCell>
