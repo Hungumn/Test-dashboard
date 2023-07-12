@@ -4,23 +4,25 @@ import { useState } from 'react'
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
-import Alert from '@mui/material/Alert'
-import Select from '@mui/material/Select'
 import { styled } from '@mui/material/styles'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
-import AlertTitle from '@mui/material/AlertTitle'
-import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
 import Button from '@mui/material/Button'
+import { Chip } from '@mui/material'
 
-// ** Icons Imports
-import Close from 'mdi-material-ui/Close'
 import moment from 'moment/moment'
+import { useEffect } from 'react'
+import { useS3Upload } from 'next-s3-upload'
+import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
+import { Loading } from 'src/Components/loading/loading'
+
+import AccountCircle from 'mdi-material-ui/AccountCircle'
+import Email from 'mdi-material-ui/Email'
+import CalendarRange from 'mdi-material-ui/CalendarRange'
+import AccountGroupOutline from 'mdi-material-ui/AccountGroupOutline'
+import CardAccountPhone from 'mdi-material-ui/CardAccountPhone'
+import MapMarker from 'mdi-material-ui/MapMarker'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -46,13 +48,29 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
   }
 }))
 
+const DetailTypographyStyled = styled(Typography)(({ theme }) => ({
+  border: 'solid 1px #ccc',
+  borderRadius: '6px',
+  padding: '16.5px 14px',
+  marginTop: '5px',
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    marginLeft: 0,
+    textAlign: 'center',
+    marginTop: theme.spacing(4)
+  }
+}))
+
 const TabAccount = props => {
   // ** State
-  const { user } = props
-  console.log('props...',user);
+  const { user, imgSrc, setImgSrc } = props
   const [openAlert, setOpenAlert] = useState(true)
-  const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
+  const [isLoading, setIsLoading] = useState(false)
   const [avatarFile, setAvatarFile] = useState()
+  const [render, setRender] = useState(false)
+  const path = process.env.NEXT_PUBLIC_S3_URL
+  const { uploadToS3 } = useS3Upload()
+  const { updateUserAdminFunc } = useUsersAdminFunc()
 
   const onChange = file => {
     const reader = new FileReader()
@@ -60,22 +78,57 @@ const TabAccount = props => {
     if (files && files.length !== 0) {
       reader.onload = () => setImgSrc(reader.result)
       reader.readAsDataURL(files[0])
+      setAvatarFile(files[0])
     }
-    console.log('file', files[0])
   }
 
-  // const onChange = async (file) => {
-  // 	const avatarURL = URL.createObjectURL(file);
-  // 	console.log('file', file);
-  // 	console.log('avatarURL', avatarURL);
-  // 	setAvatarFile(file);
-  // };
+  const handleUpload = async () => {
+    try {
+      if (!avatarFile) {
+        setIsLoading(false)
+        return
+      }
+      let { key } = await uploadToS3(avatarFile, {
+        endpoint: {
+          request: {
+            body: {
+              projectId: user.id,
+              folder: 'Avatar'
+            }
+          }
+        }
+      })
+      console.log('Image uploaded:', key)
+      return key
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const changeAvatarAdmin = async () => {
+    try {
+      setIsLoading(true)
+      const key = await handleUpload()
+
+      if (key) {
+        const dataPost = {
+          avatar: key
+        }
+        await updateUserAdminFunc(user.id, dataPost)
+        setRender(!render)
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.error(error)
+      setIsLoading(false)
+    }
+  }
 
   return (
     <CardContent>
       <form>
         <Grid container spacing={7}>
-          <Grid item xs={12} sm={6} sx={{ marginTop: 4.8, marginBottom: 3 }}>
+          <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <ImgStyled src={imgSrc} alt='Profile Pic' />
               <Box>
@@ -93,68 +146,48 @@ const TabAccount = props => {
                   Reset
                 </ResetButtonStyled>
                 <Typography variant='body2' sx={{ marginTop: 5 }}>
-                  Allowed PNG or JPEG. Max size of 800K.
+                  Allowed PNG or JPEG. Max size of 10Mb.
                 </Typography>
+                {isLoading ? (
+                  <Loading />
+                ) : (
+                  <Button
+                    type='submit'
+                    variant='contained'
+                    sx={{ marginTop: 3.5 }}
+                    onClick={changeAvatarAdmin}
+                    disabled={isLoading}
+                  >
+                    Save Changes
+                  </Button>
+                )}
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ marginTop: 10, marginBottom: 3 }}>
-            <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={() => setOpenAlert(!openAlert)}>
-              Edit
-            </Button>
+          <Grid item xs={12} sm={6}>
+            <Chip icon={<AccountCircle />} label='Username' variant='outlined' />
+            <DetailTypographyStyled>{user?.fullName}</DetailTypographyStyled>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Username' defaultValue={user?.fullName} inputProps={{ readOnly: openAlert }} />
+            <Chip icon={<AccountGroupOutline />} label='Role' variant='outlined' />
+            <DetailTypographyStyled>{user?.roleName}</DetailTypographyStyled>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Role' defaultValue={user?.roleName} inputProps={{ readOnly: true }} />
+            <Chip icon={<Email />} label='Email' variant='outlined' />
+            <DetailTypographyStyled>{user?.email}</DetailTypographyStyled>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              type='email'
-              label='Email'
-              inputProps={{ readOnly: true }}
-              defaultValue={user?.email}
-            />
+            <Chip icon={<CalendarRange />} label='Bird Date' variant='outlined' />
+            <DetailTypographyStyled>{moment.unix(user?.doB).format('MM/DD/YYYY')}</DetailTypographyStyled>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              type='text'
-              label='Bird Date'
-              inputProps={{ readOnly: true }}
-              defaultValue={moment.unix(user?.doB).format("MM/DD/YYYY")}
-            />
+            <Chip icon={<CardAccountPhone />} label='Phone Number' variant='outlined' />
+            <DetailTypographyStyled>{user?.phoneNo}</DetailTypographyStyled>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              type='text'
-              label='Phone'
-              inputProps={{ readOnly: openAlert }}
-              defaultValue={user?.phone}
-            />
+            <Chip icon={<MapMarker />} label='Address' variant='outlined' />
+            <DetailTypographyStyled>{user?.address}</DetailTypographyStyled>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              type='text'
-              label='Address'
-              inputProps={{ readOnly: openAlert }}
-              defaultValue={user?.add}
-            />
-          </Grid>
-          {!openAlert ? (
-            <Grid item xs={12}>
-              <Button variant='contained' sx={{ marginRight: 3.5 }}>
-                Save Changes
-              </Button>
-              <Button type='reset' variant='outlined' color='secondary'>
-                Reset
-              </Button>
-            </Grid>
-          ) : null}
         </Grid>
       </form>
     </CardContent>

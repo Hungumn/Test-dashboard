@@ -9,6 +9,10 @@ import useOnClickOutside from 'use-onclickoutside'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import { useAuth } from 'src/@core/hooks/use-auth'
 import AccountPlusOutline from 'mdi-material-ui/AccountPlusOutline'
+import LoginIcon from '@mui/icons-material/Login';
+import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
+
+const path = process.env.NEXT_PUBLIC_S3_URL
 
 const Header = ({ isErrorPage }) => {
   const router = useRouter()
@@ -16,6 +20,9 @@ const Header = ({ isErrorPage }) => {
   const { cartItems } = useSelector(state => state.cart)
   const arrayPaths = ['/']
   const user = useAuth()
+  const userId = user?.user?.id
+  const [userDetailAdmin, setUserDetailAdmin] = useState()
+  const { detailUserAdminFunc } = useUsersAdminFunc()
 
   const [onTop, setOnTop] = useState(!arrayPaths.includes(router.pathname) || isErrorPage ? false : true)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -42,11 +49,17 @@ const Header = ({ isErrorPage }) => {
     }
   }, [])
 
-  useEffect(() => {
-    if (user.user?.username) {
+  useEffect(async () => {
+    if (user.user?.id) {
       setIsAuth(true)
     }
-  }, [user])
+    const userDetailAdmin = await detailUserAdminFunc(userId)
+    if (userId) {
+      console.log('header admin',userId);
+      setUserDetailAdmin(userDetailAdmin)
+    }
+  }, [])
+
 
   const closeMenu = () => {
     setMenuOpen(false)
@@ -91,19 +104,26 @@ const Header = ({ isErrorPage }) => {
             <i onClick={() => setSearchOpen(!searchOpen)} className='icon-search'></i>
           </button>
           <Link href='/cart'>
-            <button className='btn-cart' >
+            <button className='btn-cart'>
               <i className='icon-cart'></i>
               {cartItems.length > 0 && <span className='btn-cart__count'>{cartItems.length}</span>}
             </button>
           </Link>
           {isAuth ? (
-            <UserDropdown />
+            <UserDropdown user={userDetailAdmin} />
           ) : (
-            <Link href='pages/register'>
-              <button className='site-header__btn-avatar' style={{fontSize:'35px'}}>
-                <AccountPlusOutline sx={{fontSize:'26px'}} />
-              </button>
-            </Link>
+            <>
+              <Link href='pages/register'>
+                <button className='site-header__btn-avatar' style={{ fontSize: '35px' }}>
+                  <AccountPlusOutline sx={{ fontSize: '26px' }} />
+                </button>
+              </Link>
+              <Link href='pages/login'>
+                <button className='site-header__btn-avatar' style={{ fontSize: '35px' }}>
+                  <LoginIcon sx={{ fontSize: '26px' }} />
+                </button>
+              </Link>
+            </>
           )}
 
           <button onClick={() => setMenuOpen(true)} className='site-header__btn-menu'>

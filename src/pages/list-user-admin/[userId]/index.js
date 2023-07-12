@@ -136,7 +136,7 @@ const UserDetailAdmin = () => {
 }
 
 UserDetailAdmin.getLayout = page => (
-  <AuthGuard>
+  <AuthGuard role={'Admin'}>
     <UserLayout>{page}</UserLayout>
   </AuthGuard>
 )

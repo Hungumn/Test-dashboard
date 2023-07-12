@@ -107,7 +107,7 @@ const UpdateUserDetailAdmin = () => {
     console.log('user detail...', userDetail)
   }, [render])
   useEffect(() => {
-    ;(async function getFileURL() {
+    (async function getFileURL() {
       formik.setValues({
         ...user
       })
@@ -160,21 +160,6 @@ const UpdateUserDetailAdmin = () => {
     return true
   }
 
-  const removeOldAvatar = async key => {
-    const client = new S3Client({})
-    const command = new DeleteObjectCommand({
-      Bucket: process.env.S3_UPLOAD_BUCKET,
-      Key: key
-    })
-    try {
-      const response = await client.send(command)
-      console.log('response...', response)
-      return response
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   const handleUpload = async () => {
     try {
       let { key } = await uploadToS3(avatarFile, {
@@ -210,10 +195,6 @@ const UpdateUserDetailAdmin = () => {
       setIsLoading(true)
       const valuesFormik = formik.values
       const key = await handleUpload()
-      if (avatarFile) {
-        const res = await removeOldAvatar(user?.avatar)
-        console.log('res...', res)
-      }
       const dataPost = {
         fullName: valuesFormik.fullName,
         address: valuesFormik.address,
@@ -381,7 +362,7 @@ const UpdateUserDetailAdmin = () => {
 }
 
 UpdateUserDetailAdmin.getLayout = page => (
-  <AuthGuard>
+  <AuthGuard role={'Admin'}>
     <UserLayout>{page}</UserLayout>
   </AuthGuard>
 )

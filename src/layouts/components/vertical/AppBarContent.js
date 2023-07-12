@@ -13,10 +13,27 @@ import Magnify from 'mdi-material-ui/Magnify'
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import NotificationDropdown from 'src/@core/layouts/components/shared-components/NotificationDropdown'
+import { useAuth } from 'src/@core/hooks/use-auth'
+import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
+import { useState } from 'react'
+import { useEffect } from 'react'
 
 const AppBarContent = props => {
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props
+  const user = useAuth()
+  const userId = user.user.id
+  const [userDetailAdmin, setUserDetailAdmin] = useState()
+  const { detailUserAdminFunc } = useUsersAdminFunc()
+
+  useEffect(async () => {
+    const userDetailAdmin = await detailUserAdminFunc(userId)
+    if (userId) {
+      console.log('header admin',userId);
+      setUserDetailAdmin(userDetailAdmin)
+    }
+  }, [])
+
 
   // ** Hook
   const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
@@ -63,7 +80,7 @@ const AppBarContent = props => {
         )}
         <ModeToggler settings={settings} saveSettings={saveSettings} />
         <NotificationDropdown />
-        <UserDropdown />
+        <UserDropdown user={userDetailAdmin} />
       </Box>
     </Box>
   )

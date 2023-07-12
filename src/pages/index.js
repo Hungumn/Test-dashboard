@@ -102,10 +102,10 @@ const Dashboard = props => {
     </ApexChartWrapper>
   )
 }
-Dashboard.getLayout = (page) => (
-
+Dashboard.getLayout = page => (
+  <AuthGuard role={'Admin'}>
     <UserLayout>{page}</UserLayout>
-
+  </AuthGuard>
 )
 
 export default Dashboard

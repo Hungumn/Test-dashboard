@@ -25,6 +25,9 @@ import 'react-datepicker/dist/react-datepicker.css'
 import UserLayout from 'src/layouts/UserLayout'
 import { AuthGuard } from 'src/@core/hooks/auth-guard'
 import { useAuth } from 'src/@core/hooks/use-auth'
+import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
+import { useEffect } from 'react'
+import _ from 'lodash'
 
 const Tab = styled(MuiTab)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -44,13 +47,27 @@ const TabName = styled('span')(({ theme }) => ({
   }
 }))
 
+const path = process.env.NEXT_PUBLIC_S3_URL
+
 const AccountSettings = () => {
   // ** State
   const [value, setValue] = useState('account')
   const user = useAuth()
+  const { detailUserAdminFunc } = useUsersAdminFunc()
+  const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
+  const [userDetailAdmin, setUserDetailAdmin] = useState()
 
-  const userDetail = user?.user
-  console.log('user...', userDetail)
+  useEffect(async () => {
+    const userDetailAdmin = await detailUserAdminFunc(user.user.id)
+    if (userDetailAdmin) {
+      if (_.isNull(userDetailAdmin.avatar) || _.isEmpty(userDetailAdmin.avatar)) {
+        setImgSrc('/images/avatars/1.png')
+      } else {
+        setImgSrc(`${path}${userDetailAdmin?.avatar}`)
+      }
+      setUserDetailAdmin(userDetailAdmin)
+    }
+  }, [])
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
@@ -93,7 +110,7 @@ const AccountSettings = () => {
         </TabList>
 
         <TabPanel sx={{ p: 0 }} value='account'>
-          <TabAccount user={userDetail} />
+          <TabAccount user={userDetailAdmin} imgSrc={imgSrc} setImgSrc={setImgSrc} />
         </TabPanel>
         {/* <TabPanel sx={{ p: 0 }} value='security'>
           <TabSecurity />

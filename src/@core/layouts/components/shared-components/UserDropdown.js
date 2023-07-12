@@ -23,6 +23,7 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 import { useAuth } from 'src/@core/hooks/use-auth'
+import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -33,12 +34,15 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
   boxShadow: `0 0 0 2px ${theme.palette.background.paper}`
 }))
 
-const UserDropdown = () => {
+const path = process.env.NEXT_PUBLIC_S3_URL
+
+const UserDropdown = props => {
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
-  const user = useAuth()
+  const { user } = props
+  console.log('props', props)
   const { logout } = useAuth()
-  
+
   // ** Hooks
   const router = useRouter()
 
@@ -80,8 +84,10 @@ const UserDropdown = () => {
           alt='John Doe'
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
-          src='/images/avatars/1.png'
-        />
+          src={`${path}${user?.avatar}`}
+        >
+          {getInitials(user?.fullName || 'User')}
+        </Avatar>
       </Badge>
       <Menu
         anchorEl={anchorEl}
@@ -98,12 +104,14 @@ const UserDropdown = () => {
               badgeContent={<BadgeContentSpan />}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt='John Doe' src={`${path}${user?.avatar}`} sx={{ width: '2.5rem', height: '2.5rem' }}>
+                {getInitials(user?.fullName || 'User')}
+              </Avatar>
             </Badge>
             <Box sx={{ display: 'flex', marginLeft: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>{user?.user?.username}</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{user?.fullName}</Typography>
               <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                {user?.user?.role}
+                {user?.role ? user?.role : user?.roleName}
               </Typography>
             </Box>
           </Box>
@@ -149,7 +157,7 @@ const UserDropdown = () => {
         <Divider />
         <MenuItem
           sx={{ py: 2 }}
-          onClick={async() => {
+          onClick={async () => {
             await logout()
             router.push('/')
           }}

@@ -15,6 +15,7 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
+import ControlledOpenSpeedDial from 'src/Components/widgets/speed-dial'
 
 const UserLayout = ({ children }) => {
   // ** Hooks
@@ -50,7 +51,7 @@ const UserLayout = ({ children }) => {
       )}
     >
       {children}
-      <UpgradeToProButton />
+      {/* <UpgradeToProButton /> */}
     </VerticalLayout>
   )
 }

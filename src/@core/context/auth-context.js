@@ -72,15 +72,6 @@ export const AuthProvider = props => {
   }, [])
 
   const getUserInfo = useCallback(async () => {
-    // const {
-    //   data: { session },
-    //   error
-    // } = await supabase.auth.getSession()
-
-    // if (!session?.user) {
-    //   console.log('User not logged in')
-    // }
-    // return session?.user
     const token = localStorage.getItem('TOKEN')
     const userId = localStorage.getItem('USER')
     const user = await axios.get(`${baseURL}/api/Accounts/${userId}`, {
@@ -110,31 +101,8 @@ export const AuthProvider = props => {
 
   const initialize = useCallback(async () => {
     try {
-      // if (!supabase.auth.getSession()) return
       const user = await getUserInfo()
-      // console.log('user in auth...',user);
-      // const {
-      //   data: { userLogin }
-      // } = await supabase.auth.getUser()
-      // const { data, error } = await supabase
-      //   .from('profiles')
-      //   .select(`username, website, avatar_url, role`)
-      //   .eq('id', user?.id)
-      //   .limit(1)
-      //   .single()
-      // console.log('user...', data)
-      // if (data.delete_flag == 1) {
-      //   await logout()
-      //   router.replace('pages/login')
-      //   dispatch({
-      //     type: ActionType.INITIALIZE,
-      //     payload: {
-      //       isAuthenticated: false,
-      //       user: null
-      //     }
-      //   })
-      //   return
-      // }
+      console.log('user in auth...',user);
 
       dispatch({
         type: ActionType.INITIALIZE,
@@ -145,10 +113,10 @@ export const AuthProvider = props => {
             email: user.email,
             doB:user.doB,
             role: user.roleName,
-            // avatar_url: data.avatar_url,
-            username: user.fullName,
+            fullName: user.fullName,
             phone: user.phoneNo,
-            add:user.address
+            add:user.address,
+            avatar:user.avatar
           }
         }
       })
@@ -169,10 +137,6 @@ export const AuthProvider = props => {
 
   const login = async (email, password) => {
     try {
-      // const user = await supabase.auth.signInWithPassword({
-      //   email: email,
-      //   password: password
-      // })
       const data = await axios.post(`${baseURL}/api/Accounts/login`, {
         username: email,
         password: password
@@ -189,41 +153,18 @@ export const AuthProvider = props => {
       const status = data.status
       const returnData = { ...dataResponse, status }
 
-      // const { data, error } = await supabase
-      //   .from('profiles')
-      //   .select(`username, website, avatar_url, role, delete_flag`)
-      //   .eq('id', user.data.user?.id)
-      //   .limit(1)
-      //   .single()
-      // const userLogin = {
-      //   id: user.data.user.id,
-      //   role: data.role,
-      //   email: user.data.user.email,
-      //   avatar_url: data.avatar_url,
-      //   username: data.username
-      // }
-      // if (data?.delete_flag == 1) {
-      //   await logout()
-      //   dispatch({
-      //     type: ActionType.INITIALIZE,
-      //     payload: {
-      //       isAuthenticated: false,
-      //       user: null
-      //     }
-      //   })
-      //   return
-      // }
       dispatch({
         type: ActionType.LOGIN,
         payload: {
           user: {
             id: dataResponse?.accountId,
             role: dataResponse?.roleName,
-            username: dataResponse?.fullName,
+            fullName: dataResponse?.fullName,
             email: dataResponse?.email,
             doB: dataResponse?.doB,
             phone: dataResponse?.phoneNo,
-            add:dataResponse?.address
+            add:dataResponse?.address,
+            avatar:dataResponse?.avatar
           }
         }
       })
