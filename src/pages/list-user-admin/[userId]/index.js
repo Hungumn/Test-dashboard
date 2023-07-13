@@ -32,8 +32,8 @@ import moment from 'moment/moment'
 import _ from 'lodash'
 
 const ImgStyled = styled('img')(({ theme }) => ({
-  width: 120,
-  height: 120,
+  width: 200,
+  height: 'auto',
   marginRight: theme.spacing(6.25),
   borderRadius: theme.shape.borderRadius
 }))
