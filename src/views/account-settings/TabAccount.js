@@ -112,9 +112,11 @@ const TabAccount = props => {
 
       if (key) {
         const dataPost = {
-          avatar: key
+          ...user,
+          avatar: key,
+          ModifiedBy:'Admin'
         }
-        await updateUserAdminFunc(user.id, dataPost)
+        await updateUserAdminFunc(user.accountId, dataPost)
         setRender(!render)
         setIsLoading(false)
       }
@@ -152,7 +154,6 @@ const TabAccount = props => {
                   <Loading />
                 ) : (
                   <Button
-                    type='submit'
                     variant='contained'
                     sx={{ marginTop: 3.5 }}
                     onClick={changeAvatarAdmin}
