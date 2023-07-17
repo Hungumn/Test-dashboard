@@ -76,7 +76,7 @@ const Header = ({ isErrorPage }) => {
   return (
     <header className={`site-header ${!onTop ? 'site-header--fixed' : ''}`}>
       <div className='container'>
-        <Link href='home-page'>
+        <Link href='/home-page'>
           <a>
             <h1 className='site-logo'>
               <Logo />

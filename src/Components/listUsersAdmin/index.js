@@ -10,21 +10,37 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
-import { Box, Button, IconButton, InputAdornment, Modal, TextField, Typography, Avatar } from '@mui/material'
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  Modal,
+  TextField,
+  Typography,
+  Avatar,
+  SpeedDial,
+  SpeedDialIcon,
+  SpeedDialAction,
+  Menu,
+  MenuItem,
+  ListItemText,
+  ListItemIcon
+} from '@mui/material'
 import Magnify from 'mdi-material-ui/Magnify'
 import moment from 'moment'
 import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
 import { toast } from 'react-hot-toast'
-import NextLink from 'next/link';
+import NextLink from 'next/link'
 import CloseCircleOutline from 'mdi-material-ui/CloseCircleOutline'
 import ArrowRightCircle from 'mdi-material-ui/ArrowRightCircle'
 
 import { useRouter } from 'next/router'
 import { getInitials } from 'src/@core/utils/get-initials'
-
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 
 const columns = [
-  {id:'avatar', minWidth:100},
+  { id: 'avatar', minWidth: 100 },
   { id: 'name', label: 'Name', minWidth: 170 },
   { id: 'address', label: 'Address', minWidth: 100 },
   {
@@ -164,6 +180,15 @@ const ListUserAdminTable = props => {
   const { clients, setRender, render } = props
   const path = process.env.NEXT_PUBLIC_S3_URL
 
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
   const handleQueryChange = event => {
     event.preventDefault()
     setFilters(prevState => ({
@@ -299,48 +324,67 @@ const ListUserAdminTable = props => {
             {paginatedStudents.map((item, index) => {
               return (
                 <TableRow key={item.accountId}>
-                   <TableCell align={'left'}><Avatar src={`${path}${item.avatar}`}>{getInitials(item?.fullName || 'User')}</Avatar></TableCell>
+                  <TableCell align={'left'}>
+                    <Avatar src={`${path}${item.avatar}`}>{getInitials(item?.fullName || 'User')}</Avatar>
+                  </TableCell>
                   <TableCell align={'left'}>{item.fullName}</TableCell>
                   <TableCell align={'left'}>{item.address}</TableCell>
                   <TableCell align={'left'}>{item.phoneNo}</TableCell>
                   <TableCell align={'left'}>{item.email}</TableCell>
                   <TableCell align={'left'}>{moment.unix(item.doB).format('MM/DD/YYYY')}</TableCell>
-                  <TableCell align={'left'}>
-                    <IconButton 
-                      variant='outlined' 
-                      sx={{
-                        color: '#ff4c51 !important',
-                        borderRadius: '10px',
-                        '&:hover': {
-                          backgroundColor: 'transparent',
-                          transform:'scale(1.2)'
-                        }
-                      }}
-                      onClick={() => {
-                        setOpenModal(true)
-                        setUserSelected(item.accountId)
-                      }}
-                      disabled={item.roleName == 'Admin'}
-                      
-                    >
-                      <CloseCircleOutline/>
-                    </IconButton>
+                  <TableCell>
                     <IconButton
-                      variant='contained'
-                      sx={{
-                        color: '#429AEB !important',
-                        borderRadius: '10px',
-                        '&:hover': {
-                          backgroundColor: 'transparent',
-                          transform:'scale(1.2)'
-                        },
-                      }}
-                      onClick={() => {
-                        router.push(`list-user-admin/${item?.accountId}`)
+                      id='basic-button'
+                      aria-controls={open ? 'basic-menu' : undefined}
+                      aria-haspopup='true'
+                      aria-expanded={open ? 'true' : undefined}
+                      onClick={handleClick}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      id='basic-menu'
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button'
                       }}
                     >
-                      <ArrowRightCircle/>
-                    </IconButton>
+                      <MenuItem
+                        onClick={() => {
+                          setOpenModal(true)
+                          setUserSelected(item.accountId)
+                        }}
+                      >
+                        <ListItemIcon>
+                          <CloseCircleOutline
+                            fontSize='small'
+                            sx={{
+                              color: '#ff4c51 !important',
+                              borderRadius: '10px'
+                            }}
+                          />
+                        </ListItemIcon>
+                        <ListItemText>Delete User</ListItemText>
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          router.push(`list-user-admin/${item?.accountId}`)
+                        }}
+                      >
+                        <ListItemIcon>
+                          <ArrowRightCircle
+                            fontSize='small'
+                            sx={{
+                              color: '#429AEB !important',
+                              borderRadius: '10px'
+                            }}
+                          />
+                        </ListItemIcon>
+                        <ListItemText>User Detail</ListItemText>
+                      </MenuItem>
+                    </Menu>
                   </TableCell>
                 </TableRow>
               )

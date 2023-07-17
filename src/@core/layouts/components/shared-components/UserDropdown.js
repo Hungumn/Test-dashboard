@@ -117,13 +117,13 @@ const UserDropdown = props => {
           </Box>
         </Box>
         <Divider sx={{ mt: 0, mb: 1 }} />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        <MenuItem sx={{ p: 0 }} onClick={() => router.push(`/profile/${user.accountId}`)}>
           <Box sx={styles}>
             <AccountOutline sx={{ marginRight: 2 }} />
             Profile
           </Box>
         </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <EmailOutline sx={{ marginRight: 2 }} />
             Inbox
@@ -134,20 +134,20 @@ const UserDropdown = props => {
             <MessageOutline sx={{ marginRight: 2 }} />
             Chat
           </Box>
-        </MenuItem>
-        <Divider />
+        </MenuItem> */}
+        {/* <Divider /> */}
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <CogOutline sx={{ marginRight: 2 }} />
             Settings
           </Box>
         </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <CurrencyUsd sx={{ marginRight: 2 }} />
             Pricing
           </Box>
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <HelpCircleOutline sx={{ marginRight: 2 }} />
