@@ -25,7 +25,8 @@ import {
   Menu,
   MenuItem,
   ListItemText,
-  ListItemIcon
+  ListItemIcon,
+  Popover
 } from '@mui/material'
 import Magnify from 'mdi-material-ui/Magnify'
 import moment from 'moment'
@@ -180,7 +181,7 @@ const ListUserAdminTable = props => {
   const { clients, setRender, render } = props
   const path = process.env.NEXT_PUBLIC_S3_URL
 
-  const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorEl, setAnchorEl] = useState(false)
   const open = Boolean(anchorEl)
   const handleClick = event => {
     setAnchorEl(event.currentTarget)
@@ -333,16 +334,37 @@ const ListUserAdminTable = props => {
                   <TableCell align={'left'}>{item.email}</TableCell>
                   <TableCell align={'left'}>{moment.unix(item.doB).format('MM/DD/YYYY')}</TableCell>
                   <TableCell>
-                    <IconButton
-                      id='basic-button'
-                      aria-controls={open ? 'basic-menu' : undefined}
-                      aria-haspopup='true'
-                      aria-expanded={open ? 'true' : undefined}
-                      onClick={handleClick}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
+                    <Box sx={{ display: 'flex !important' }}>
+                      <Button
+                        onClick={() => {
+                          console.log('account id...', item?.accountId)
+                          setOpenModal(true)
+                          setUserSelected(item.accountId)
+                        }}
+                      >
+                        <CloseCircleOutline
+                          fontSize='small'
+                          sx={{
+                            color: '#ff4c51 !important',
+                            borderRadius: '10px'
+                          }}
+                        />
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          router.push(`list-user-admin/${item?.accountId}`)
+                        }}
+                      >
+                        <ArrowRightCircle
+                          fontSize='small'
+                          sx={{
+                            color: '#429AEB !important',
+                            borderRadius: '10px'
+                          }}
+                        />
+                      </Button>
+                    </Box>
+                    {/* <Menu
                       id='basic-menu'
                       anchorEl={anchorEl}
                       open={open}
@@ -353,8 +375,9 @@ const ListUserAdminTable = props => {
                     >
                       <MenuItem
                         onClick={() => {
-                          setOpenModal(true)
-                          setUserSelected(item.accountId)
+                          console.log('account id...', item?.accountId)
+                          // setOpenModal(true)
+                          // setUserSelected(item.accountId)
                         }}
                       >
                         <ListItemIcon>
@@ -370,7 +393,8 @@ const ListUserAdminTable = props => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          router.push(`list-user-admin/${item?.accountId}`)
+                          console.log('account id...', item?.accountId)
+                          // router.push(`list-user-admin/${item?.accountId}`)
                         }}
                       >
                         <ListItemIcon>
@@ -384,7 +408,7 @@ const ListUserAdminTable = props => {
                         </ListItemIcon>
                         <ListItemText>User Detail</ListItemText>
                       </MenuItem>
-                    </Menu>
+                    </Menu> */}
                   </TableCell>
                 </TableRow>
               )

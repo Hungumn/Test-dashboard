@@ -40,7 +40,6 @@ const UserDropdown = props => {
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
   const { user } = props
-  console.log('props', props)
   const { logout } = useAuth()
 
   // ** Hooks
