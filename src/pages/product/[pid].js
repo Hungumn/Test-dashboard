@@ -48,13 +48,13 @@ const Product = () => {
 
   const getProductDetail = async() => {
     const result = await ProductDetailFunc(router.query.pid);
-    console.log(result);
+    console.log('result...',result);
     setProduct(result);
   };
 
   return (
     <Layout>
-      <Breadcrumb />
+      <Breadcrumb title={`product / ${product.productName}`}/>
 
       <section className="product-single">
         <div className="container">

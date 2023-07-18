@@ -5,7 +5,7 @@ const Breadcrumb = (props) => {
       <div className='container'>
         <ul className='breadcrumb-list'>
           <li>
-            <a href='#'>
+            <a href='/home-page'>
               <i className='icon-home'></i>
             </a>
           </li>
