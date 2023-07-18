@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 // ** MUI Imports
 import Paper from '@mui/material/Paper'
@@ -10,24 +10,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
-import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  Modal,
-  TextField,
-  Typography,
-  Avatar,
-  SpeedDial,
-  SpeedDialIcon,
-  SpeedDialAction,
-  Menu,
-  MenuItem,
-  ListItemText,
-  ListItemIcon,
-  Popover
-} from '@mui/material'
+import { Box, Button, InputAdornment, Modal, TextField, Typography, Avatar } from '@mui/material'
 import Magnify from 'mdi-material-ui/Magnify'
 import moment from 'moment'
 import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
@@ -38,32 +21,40 @@ import ArrowRightCircle from 'mdi-material-ui/ArrowRightCircle'
 
 import { useRouter } from 'next/router'
 import { getInitials } from 'src/@core/utils/get-initials'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { useCategoryFunc } from 'src/@core/hooks/use-category'
 
 const columns = [
-  { id: 'avatar', minWidth: 100 },
   { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'address', label: 'Address', minWidth: 100 },
+  { id: 'CategoryName', label: 'Category', minWidth: 100 },
   {
-    id: 'phoneNo',
-    label: 'Phone Number',
+    id: 'CreateDate',
+    label: 'Create Date',
     minWidth: 170,
-    align: 'right',
-    format: value => value.toLocaleString('en-US')
+    align: 'right'
   },
   {
-    id: 'email',
-    label: 'Email',
+    id: 'Quantity',
+    label: 'Quantity',
     minWidth: 170,
-    align: 'right',
-    format: value => value.toLocaleString('en-US')
+    align: 'right'
   },
   {
-    id: 'birthDate',
-    label: 'Birth Date',
+    id: 'price',
+    label: 'Price',
     minWidth: 170,
-    align: 'right',
-    format: value => value.toFixed(2)
+    align: 'right'
+  },
+  {
+    id: 'Images',
+    label: 'Images',
+    minWidth: 170,
+    align: 'right'
+  },
+  {
+    id: 'Description',
+    label: 'Description',
+    minWidth: 170,
+    align: 'right'
   },
   { id: 'action', label: 'Action', minWidth: 100 }
 ]
@@ -79,14 +70,10 @@ const modalStyle = {
   borderRadius: '8px'
 }
 
-const filterOptions = [
+let filterOptions = [
   {
-    label: 'Admin',
-    value: 'admin'
-  },
-  {
-    label: 'User',
-    value: 'user'
+    label: 'All',
+    value: 'all'
   }
 ]
 
@@ -95,7 +82,7 @@ const applyFilters = (students, filters) => {
     const student = s
     if (filters.query) {
       let queryMatched = false
-      const properties = ['fullName']
+      const properties = ['productName']
 
       properties.forEach(property => {
         if (student[property].toLowerCase().includes(filters.query.toLowerCase())) {
@@ -144,32 +131,32 @@ const getComparator = (filterDir, filterBy) =>
     ? (a, b) => descendingComparator(a, b, filterBy)
     : (a, b) => -descendingComparator(a, b, filterBy)
 
-const applyFilterByStatus = (students, filterBy) => {
+const applyFilterByStatus = (items, filterBy) => {
   let filterByStatus
 
-  if (filterBy === 'admin') {
-    filterByStatus = students.filter(student => student?.roleName === 'Admin')
-  }
+  console.log({ items, filterBy })
 
-  if (filterBy === 'user') {
-    filterByStatus = students.filter(student => student.roleName === 'User')
+  if (filterBy === 'all') {
+    filterByStatus = items
+  } else {
+    filterByStatus = items.filter(items => items?.categoryName === filterBy)
   }
 
   return filterByStatus
 }
 
-const applyPagination = (students, page, rowsPerPage) =>
-  students.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+const applyPagination = (items, page, rowsPerPage) => items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 
-const ListUserAdminTable = props => {
+const ListProductAdminTable = props => {
   const queryRef = useRef(null)
-  const { deleteUserAdminFunc } = useUsersAdminFunc()
+  const { ListCategoryFunc } = useCategoryFunc()
   const router = useRouter()
   // ** States
   const [page, setPage] = useState(0)
+  const [listCategory, setListCategory] = useState([])
   const [userSelected, setUserSelected] = useState([])
   const [openModal, setOpenModal] = useState(false)
-  const [filter, setFilter] = useState(filterOptions[1].value)
+  const [filter, setFilter] = useState(filterOptions[0].value)
   const [filters, setFilters] = useState({
     query: '',
     hasAcceptedMarketing: undefined,
@@ -178,17 +165,28 @@ const ListUserAdminTable = props => {
   })
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
-  const { clients, setRender, render } = props
+  const { product, setRender, render } = props
   const path = process.env.NEXT_PUBLIC_S3_URL
 
-  const [anchorEl, setAnchorEl] = useState(false)
-  const open = Boolean(anchorEl)
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget)
+  function getValuesFromArray(arr, property) {
+    return arr.reduce(
+      (prev, next) => {
+        prev.push({ ['label']: next[property], ['value']: next[property] })
+
+        return prev
+      },
+      [{ label: 'All', value: 'all' }]
+    )
+
+    // return [, ...arr.map(item => ({ ['label']: item[property], ['value']: item[property] }))]
   }
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
+
+  useEffect(async () => {
+    const dataCategory = await ListCategoryFunc()
+    console.log('category', dataCategory)
+    filterOptions = getValuesFromArray(dataCategory, 'categoryName')
+    console.log('filterOptions', filterOptions)
+  }, [])
 
   const handleQueryChange = event => {
     event.preventDefault()
@@ -214,7 +212,7 @@ const ListUserAdminTable = props => {
 
   const handleCloseModal = () => setOpenModal(false)
 
-  const filteredStudents = applyFilters(clients, filters)
+  const filteredStudents = applyFilters(product, filters)
   const filteredByStatus = applyFilterByStatus(filteredStudents, filter)
   const paginatedStudents = applyPagination(filteredByStatus, page, rowsPerPage)
 
@@ -295,7 +293,7 @@ const ListUserAdminTable = props => {
         </Modal>
         <TextField
           size={'small'}
-          label={' Filter By'}
+          label={' Filter By Category'}
           name='filter'
           onChange={handleFilterChange}
           select
@@ -325,14 +323,21 @@ const ListUserAdminTable = props => {
             {paginatedStudents.map((item, index) => {
               return (
                 <TableRow key={item.accountId}>
+                  <TableCell align={'left'}>{item.productName}</TableCell>
+                  <TableCell align={'left'}>{item.categoryName}</TableCell>
+                  <TableCell align={'left'}>{moment.unix(item.createdDate).format('MM/DD/YYYY')}</TableCell>
+                  <TableCell align={'left'}>{item.quantity}</TableCell>
+                  <TableCell align={'left'}>{item.price}</TableCell>
                   <TableCell align={'left'}>
-                    <Avatar src={`${path}${item.avatar}`}>{getInitials(item?.fullName || 'User')}</Avatar>
+                    {' '}
+                    <img
+                      src={item.images}
+                      alt={item.productName}
+                      loading='lazy'
+                      style={{ width: '60px', height: '60px' }}
+                    />
                   </TableCell>
-                  <TableCell align={'left'}>{item.fullName}</TableCell>
-                  <TableCell align={'left'}>{item.address}</TableCell>
-                  <TableCell align={'left'}>{item.phoneNo}</TableCell>
-                  <TableCell align={'left'}>{item.email}</TableCell>
-                  <TableCell align={'left'}>{moment.unix(item.doB).format('MM/DD/YYYY')}</TableCell>
+                  <TableCell align={'left'}>{item.description}</TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex !important' }}>
                       <Button
@@ -364,51 +369,6 @@ const ListUserAdminTable = props => {
                         />
                       </Button>
                     </Box>
-                    {/* <Menu
-                      id='basic-menu'
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleClose}
-                      MenuListProps={{
-                        'aria-labelledby': 'basic-button'
-                      }}
-                    >
-                      <MenuItem
-                        onClick={() => {
-                          console.log('account id...', item?.accountId)
-                          // setOpenModal(true)
-                          // setUserSelected(item.accountId)
-                        }}
-                      >
-                        <ListItemIcon>
-                          <CloseCircleOutline
-                            fontSize='small'
-                            sx={{
-                              color: '#ff4c51 !important',
-                              borderRadius: '10px'
-                            }}
-                          />
-                        </ListItemIcon>
-                        <ListItemText>Delete User</ListItemText>
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          console.log('account id...', item?.accountId)
-                          // router.push(`list-user-admin/${item?.accountId}`)
-                        }}
-                      >
-                        <ListItemIcon>
-                          <ArrowRightCircle
-                            fontSize='small'
-                            sx={{
-                              color: '#429AEB !important',
-                              borderRadius: '10px'
-                            }}
-                          />
-                        </ListItemIcon>
-                        <ListItemText>User Detail</ListItemText>
-                      </MenuItem>
-                    </Menu> */}
                   </TableCell>
                 </TableRow>
               )
@@ -429,4 +389,4 @@ const ListUserAdminTable = props => {
   )
 }
 
-export default ListUserAdminTable
+export default ListProductAdminTable

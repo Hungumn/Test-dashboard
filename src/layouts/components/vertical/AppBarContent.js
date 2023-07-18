@@ -20,19 +20,19 @@ import { useEffect } from 'react'
 
 const AppBarContent = props => {
   // ** Props
-  const { hidden, settings, saveSettings, toggleNavVisibility } = props
-  const user = useAuth()
-  const userId = user.user.id
-  const [userDetailAdmin, setUserDetailAdmin] = useState()
-  const { detailUserAdminFunc } = useUsersAdminFunc()
+  const { hidden, settings, saveSettings, toggleNavVisibility, userDetailAdmin } = props
+  // const user = useAuth()
+  // const userId = user.user.id
+  // // const [userDetailAdmin, setUserDetailAdmin] = useState()
+  // const { detailUserAdminFunc } = useUsersAdminFunc()
 
-  useEffect(async () => {
-    const userDetailAdmin = await detailUserAdminFunc(userId)
-    if (userId) {
-      console.log('header admin',userId);
-      setUserDetailAdmin(userDetailAdmin)
-    }
-  }, [])
+  // useEffect(async () => {
+  //   const userDetailAdmin = await detailUserAdminFunc(userId)
+  //   if (userId) {
+  //     console.log('header admin',userId);
+  //     setUserDetailAdmin(userDetailAdmin)
+  //   }
+  // }, [])
 
 
   // ** Hook

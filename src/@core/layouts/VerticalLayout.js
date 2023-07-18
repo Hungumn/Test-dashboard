@@ -48,7 +48,7 @@ const ContentWrapper = styled('main')(({ theme }) => ({
 
 const VerticalLayout = props => {
   // ** Props
-  const { settings, children, scrollToTop } = props
+  const { settings, children, scrollToTop, userDetailAdmin } = props
 
   // ** Vars
   const { contentWidth } = settings
@@ -71,7 +71,7 @@ const VerticalLayout = props => {
           {...props}
         />
         <MainContentWrapper className='layout-content-wrapper'>
-          <AppBar toggleNavVisibility={toggleNavVisibility} {...props} />
+          <AppBar toggleNavVisibility={toggleNavVisibility} userDetailAdmin={userDetailAdmin} {...props} />
 
           <ContentWrapper
             className='layout-page-content'

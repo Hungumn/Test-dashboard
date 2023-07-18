@@ -16,11 +16,29 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
 import ControlledOpenSpeedDial from 'src/Components/widgets/speed-dial'
+import { useState } from 'react'
+import { useAuth } from 'src/@core/hooks/use-auth'
+import { useUsersAdminFunc } from 'src/@core/hooks/use-user-admin'
+import { useEffect } from 'react'
 
 const UserLayout = ({ children }) => {
   // ** Hooks
-  const userAdmin = true
+  const [isAuth, setIsAuth] = useState(false)
+  const user = useAuth()
+  const userId = user?.user?.id
+  const [userDetailAdmin, setUserDetailAdmin] = useState()
+  const { detailUserAdminFunc } = useUsersAdminFunc()
   const { settings, saveSettings } = useSettings()
+
+  useEffect(async () => {
+    if (user.user?.id) {
+      setIsAuth(true)
+    }
+    const userDetailAdmin = await detailUserAdminFunc(userId)
+    if (userId) {
+      setUserDetailAdmin(userDetailAdmin)
+    }
+  }, [])
 
   /**
    *  The below variable will hide the current layout menu at given screen size.
@@ -38,6 +56,7 @@ const UserLayout = ({ children }) => {
       hidden={hidden}
       settings={settings}
       saveSettings={saveSettings}
+      
       verticalNavItems={VerticalNavItems()} // Navigation Items
       verticalAppBarContent={(
         props // AppBar Content
@@ -47,6 +66,7 @@ const UserLayout = ({ children }) => {
           settings={settings}
           saveSettings={saveSettings}
           toggleNavVisibility={props.toggleNavVisibility}
+          userDetailAdmin={userDetailAdmin}
         />
       )}
     >

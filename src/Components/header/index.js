@@ -58,7 +58,7 @@ const Header = ({ isErrorPage }) => {
       console.log('header admin',userId);
       setUserDetailAdmin(userDetailAdmin)
     }
-  }, [])
+  }, [userId])
 
 
   const closeMenu = () => {
