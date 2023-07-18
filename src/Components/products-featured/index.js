@@ -1,11 +1,20 @@
+import { useEffect, useState } from 'react';
 import ProductsCarousel from './carousel';
-import useSwr from 'swr';
+import { useProductFunc } from "src/@core/hooks/use-product";
 
 const ProductsFeatured = () => {
+  const { ListProductFunc } = useProductFunc();
   const fetcher = (url) => fetch(url).then((res) => res.json());
-  const { data } = useSwr('/api/products', fetcher);
-  console.log('data',data);
+  const [listProduct, setListProduct] = useState([]);
 
+  useEffect(() => {
+    getListProduct();
+  }, []);
+
+  const getListProduct = async() => {
+    const result = await ListProductFunc({page: 1, limit: 10});
+    setListProduct(result);
+  };
   return (
     <section className="section section-products-featured">
       <div className="container">
@@ -14,7 +23,7 @@ const ProductsFeatured = () => {
           <a href="/products" className="btn btn--rounded btn--border">Show All</a>
         </header>
 
-        <ProductsCarousel products={data} />
+        <ProductsCarousel products={listProduct} />
       </div>
     </section>
   )

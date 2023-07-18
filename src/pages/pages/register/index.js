@@ -173,7 +173,7 @@ const RegisterPage = () => {
       if (data?.status === 200) {
         setIsLoading(false)
         toast.success(data.data.message)
-        // router.push('/pages/login')
+        router.push('/pages/login')
       } else {
         setIsLoading(false)
         throw new Error()

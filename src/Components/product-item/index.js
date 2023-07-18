@@ -5,6 +5,7 @@ import { toggleFavProduct } from 'store/reducers/user';
 import { RootState } from 'store';
 
 const ProductItem = ({ discount, images, id, name, price, currentPrice }) => {
+  const path = process.env.NEXT_PUBLIC_S3_URL
   const dispatch = useDispatch();
   const { favProducts } = useSelector((state) => state.user);
 
@@ -25,7 +26,8 @@ const ProductItem = ({ discount, images, id, name, price, currentPrice }) => {
 
         <Link href={`/product/${id}`}>
           <a>
-            <img src={images ? images[0] : ''} alt="product" />
+            {/* <img src={images ? `${path}${images}` : ''} alt="product" /> */}
+            <img src={images ? images : ''} alt="product" />
             {discount && 
               <span className="product__discount">{discount}%</span>
             }

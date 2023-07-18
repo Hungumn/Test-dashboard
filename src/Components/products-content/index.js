@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import List from './list';
 
-const ProductsContent = () => {
+const ProductsContent = ({ listProduct }) => {
   const [orderProductsOpen, setOrderProductsOpen] = useState(false);
   
   return (
@@ -29,7 +29,7 @@ const ProductsContent = () => {
         </form>
       </div>
 
-      <List />
+      <List listProduct={listProduct} />
     </section>
   );
 };

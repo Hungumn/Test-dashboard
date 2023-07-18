@@ -10,22 +10,47 @@ import { server } from 'src/utils/server';
 import ProductsFeatured from 'src/Components/products-featured';
 import Footer from 'src/Components/footer';
 import Breadcrumb from 'src/Components/breadcrumb';
+import { useProductFunc } from "src/@core/hooks/use-product";
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 
-export const getServerSideProps = async ({ query }) => {
-  const pid = query.pid;
-  const res = await fetch(`${server}/api/product/${pid}`);
-  const product = await res.json();
+// export const getServerSideProps = async ({ query }) => {
+//   const pid = query.pid;
+//   const res = await fetch(`${server}/api/product/${pid}`);
+//   const product = await res.json();
 
-  return {
-    props: {
-      product,
-    },
-  }
-}
+//   return {
+//     props: {
+//       product,
+//     },
+//   }
+// }
 
-const Product = ({ product }) => {
+const Product = () => {
+  const router = useRouter();
   const [showBlock, setShowBlock] = useState('description');
+  const { ProductDetailFunc } = useProductFunc();
+
+  const [product, setProduct] = useState({
+    productId: "",
+    productName: "",
+    images: "",
+    quantity: "",
+    price: "",
+    description: "",
+    productTechnicals: []
+  });
+
+  useEffect(() => {
+    getProductDetail();
+  }, []);
+
+  const getProductDetail = async() => {
+    const result = await ProductDetailFunc(router.query.pid);
+    console.log(result);
+    setProduct(result);
+  };
 
   return (
     <Layout>
@@ -34,7 +59,7 @@ const Product = ({ product }) => {
       <section className="product-single">
         <div className="container">
           <div className="product-single__content">
-            <Gallery images={product.images} />
+            <Gallery images={product.images ? [product.images] : []} />
             <Content product={product} />
           </div>
 
@@ -45,7 +70,7 @@ const Product = ({ product }) => {
             </div>
 
             <Description show={showBlock === 'description'} />
-            <Reviews product={product} show={showBlock === 'reviews'} />
+            {/* <Reviews product={product} show={showBlock === 'reviews'} /> */}
           </div>
         </div>
       </section>

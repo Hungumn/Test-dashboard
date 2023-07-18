@@ -2,27 +2,26 @@ import useSwr from 'swr';
 import ProductItem from '../../product-item';
 import ProductsLoading from './loading';
 
-const ProductsContent = () => {
-  const fetcher = (url) => fetch(url).then((res) => res.json());
-  const { data, error } = useSwr('/api/products', fetcher);
+const ProductsContent = ({ listProduct }) => {
+  // const fetcher = (url) => fetch(url).then((res) => res.json());
+  // const { data, error } = useSwr('/api/products', fetcher);
 
-  if (error) return <div>Failed to load users</div>;
+  if (!listProduct.length) return <div>Failed to load users</div>;
   return (
     <>
-      {!data && 
+      {!listProduct && 
         <ProductsLoading />
       }
 
-      {data &&
+      {listProduct &&
         <section className="products-list">
-          {data.map((item)  => (
+          {listProduct.map((item, index)  => (
             <ProductItem 
-              id={item.id} 
-              name={item.name}
+              id={item.productId} 
+              name={item.productName}
               price={item.price}
-              color={item.color}
-              currentPrice={item.currentPrice}
-              key={item.id}
+              currentPrice={item.price}
+              key={index}
               images={item.images} 
             />
           ))}

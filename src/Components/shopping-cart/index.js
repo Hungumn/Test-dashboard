@@ -2,10 +2,16 @@ import { useSelector } from 'react-redux';
 import Item from './item';
 import { RootState } from 'store';
 import CheckoutStatus from '../checkout-status';
+import { OrderDetailByUserFunc } from 'src/@core/hooks/use-cart';
+import { useState } from 'react';
 
 const ShoppingCart = () => {
   const { cartItems } = useSelector((state)  => state.cart);
+  const [ order, setOrder ] = useState({});
 
+  const getOrder = async() => {
+    const result = await OrderDetailByUserFunc();
+  };
   const priceTotal = () => {
     let totalPrice = 0;
     if(cartItems.length > 0) {

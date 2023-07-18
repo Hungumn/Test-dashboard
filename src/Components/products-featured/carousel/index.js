@@ -35,13 +35,11 @@ const ProductsCarousel = ({ products }) => {
         {products.map(item => (
           <SwiperSlide key={item.id}>
             <ProductItem 
-              id={item.id} 
-              name={item.name}
+              id={item.productId} 
+              name={item.productName}
               price={item.price}
-              color={item.color}
-              discount={item.discount}
-              currentPrice={item.currentPrice}
-              key={item.id}
+              currentPrice={item.price}
+              key={item.productId}
               images={item.images} 
             />
           </SwiperSlide>

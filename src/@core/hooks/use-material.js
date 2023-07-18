@@ -1,24 +1,24 @@
 import axios from 'axios'
 import { useState, useEffect, useCallback } from 'react'
 
-export function useCategoryFunc() {
+export function useMaterialFunc() {
   const baseURL = process.env.NEXT_PUBLIC_URL
   const token = localStorage.getItem('TOKEN')
 
-  const ListCategoryFunc = useCallback(async () => {
+  const ListMaterialFunc = useCallback(async () => {
     const dataFilter = {
       name: '',
       page: 1,
       limit: -1
     }
     try {
-      const categoryList = await axios.post(baseURL + '/api/Categories/filter', dataFilter, {
+      const result = await axios.post(baseURL + '/api/Materials/filter', dataFilter, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
 
-      return categoryList.data.data
+      return result.data.data
     } catch (err) {
       console.error(err)
     }
@@ -26,6 +26,6 @@ export function useCategoryFunc() {
 
 
   return {
-    ListCategoryFunc,
+    ListMaterialFunc,
   }
 }

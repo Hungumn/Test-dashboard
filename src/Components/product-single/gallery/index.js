@@ -1,5 +1,5 @@
 const Gallery = ({ images }) => {
-  const featImage = images[0]
+  const featImage = images[0];
 
   return (
     <section className='product-gallery'>

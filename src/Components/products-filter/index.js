@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Checkbox from './form-builder/checkbox';
 import Slider from 'rc-slider';
 
@@ -11,9 +11,8 @@ import CheckboxColor from 'src/Components/products-filter/form-builder/checkboxC
 const { createSliderWithTooltip } = Slider;
 const Range = createSliderWithTooltip(Slider.Range);
 
-const ProductsFilter = () => {
+const ProductsFilter = ({ listCategory, listMaterial }) => {
   const [filtersOpen, setFiltersOpen] = useState(false);
-
   const addQueryParams = () => {
     // query params changes
   }
@@ -30,11 +29,11 @@ const ProductsFilter = () => {
         <div className="products-filter__block">
           <button type="button">Product type</button>
           <div className="products-filter__block__content">
-            {productsTypes.map(type => (
+            {listCategory.map(type => (
               <Checkbox 
-                key={type.id} 
-                name="product-type" 
-                label={type.name} 
+                key={type.categoryId} 
+                name="category" 
+                label={type.categoryName} 
               />
             ))}
           </div>
@@ -47,7 +46,7 @@ const ProductsFilter = () => {
           </div>
         </div>
         
-        <div className="products-filter__block">
+        {/* <div className="products-filter__block">
           <button type="button">Size</button>
           <div className="products-filter__block__content checkbox-square-wrapper">
             {productsSizes.map(type => (
@@ -56,6 +55,19 @@ const ProductsFilter = () => {
                 key={type.id} 
                 name="product-size" 
                 label={type.label} />
+            ))}
+          </div>
+        </div> */}
+
+        <div className="products-filter__block">
+          <button type="button">Material type</button>
+          <div className="products-filter__block__content">
+            {listMaterial.map(type => (
+              <Checkbox 
+                key={type.materialId} 
+                name="material" 
+                label={type.materialName} 
+              />
             ))}
           </div>
         </div>
