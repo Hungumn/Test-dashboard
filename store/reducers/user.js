@@ -4,7 +4,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const initialState = {
   user: {
-    name: 'Lucas Pulliese',
+    fullName: 'Lucas Pulliese',
   },
   favProducts: [],
 }

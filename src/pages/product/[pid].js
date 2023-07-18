@@ -69,7 +69,7 @@ const Product = () => {
               <button type="button" onClick={() => setShowBlock('reviews')} className={`btn btn--rounded ${showBlock === 'reviews' ? 'btn--active' : ''}`}>Reviews (2)</button>
             </div>
 
-            <Description show={showBlock === 'description'} />
+            <Description show={showBlock === 'description'} description={product.description} />
             {/* <Reviews product={product} show={showBlock === 'reviews'} /> */}
           </div>
         </div>
