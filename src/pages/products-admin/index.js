@@ -15,7 +15,7 @@ function ProductAdmin() {
   const [listCategory, setListCategory] = useState([])
   const [render, setRender] = useState(false)
   useEffect(async () => {
-    const dataUser = await ListProductFunc()
+    const dataUser = await ListProductFunc({ limit: -1 })
     setListCategory(dataUser)
   }, [])
 
