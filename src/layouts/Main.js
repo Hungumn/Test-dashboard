@@ -18,7 +18,7 @@ const ClientLayout = ({ children, title = 'Next.js Ecommerce' }) => {
 
       <main className={pathname !== '/' ? 'main-page' : ''}>{children}</main>
       <ScrollToTop smooth />
-      <UpgradeToProButton/>
+      {/* <UpgradeToProButton/> */}
     </div>
   )
 }
