@@ -3,8 +3,34 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'store';
 import CheckoutStatus from 'src/Components/checkout-status';
 import CheckoutItems from 'src/Components/checkout';
+import { useEffect, useState } from 'react';
+import { useAuth } from 'src/@core/hooks/use-auth'
+import { useRouter } from 'next/router';
 
 const CheckoutPage = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phoneNo, setPhoneNo] = useState("");
+  const user = useAuth().user;
+  let loginBtn;
+  useEffect(() => {
+    console.log(user);
+    if(!user.fullName) {
+      loginBtn = (
+        <div className="checkout__btns">
+          <button className="btn btn--rounded btn--yellow">Log in</button>
+          <button className="btn btn--rounded btn--border">Sign up</button>
+        </div>
+      );
+    } else {
+      setFullName(user.fullName);
+      setAddress(user.add);
+      setEmail(user.email);
+      setPhoneNo(user.phoneNo);
+    }
+  }, []);
 
   const priceTotal = useSelector((state) => {
     const cartItems = state.cart.cartItems;
@@ -14,7 +40,13 @@ const CheckoutPage = () => {
     }
 
     return totalPrice;
-  })
+  });
+
+  const redirectToHome = () => {
+    router.push("/home-page");
+  };
+
+  const submitOrder = () => {};
 
   return (
     <Layout>
@@ -27,35 +59,32 @@ const CheckoutPage = () => {
 
           <div className="checkout-content">
             <div className="checkout__col-6">
-              <div className="checkout__btns">
-                <button className="btn btn--rounded btn--yellow">Log in</button>
-                <button className="btn btn--rounded btn--border">Sign up</button>
-              </div>
+              {loginBtn}
 
               <div className="block">
                 <h3 className="block__title">Shipping information</h3>
                 <form className="form">
                   <div className="form__input-row form__input-row--two">
                     <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="Email" />
+                      <input className="form__input form__input--sm" value={email} onChange={(e) => setEmail(e.target.value)} type="text" placeholder="Email" />
                     </div>
 
                     <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="Address" />
+                      <input className="form__input form__input--sm" value={address} onChange={(e) => setAddress(e.target.value)} type="text" placeholder="Address" />
                     </div>
                   </div>
                   
                   <div className="form__input-row form__input-row--two">
                     <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="First name" />
+                      <input className="form__input form__input--sm" value={fullName} onChange={(e) => setFullName(e.target.value)} type="text" placeholder="Fullname" />
                     </div>
 
                     <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="City" />
+                      <input className="form__input form__input--sm" value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} type="text" placeholder="Phone number" />
                     </div>
                   </div>
                   
-                  <div className="form__input-row form__input-row--two">
+                  {/* <div className="form__input-row form__input-row--two">
                     <div className="form__col">
                       <input className="form__input form__input--sm" type="text" placeholder="Last name" />
                     </div>
@@ -63,9 +92,9 @@ const CheckoutPage = () => {
                     <div className="form__col">
                       <input className="form__input form__input--sm" type="text" placeholder="Postal code / ZIP" />
                     </div>
-                  </div>
+                  </div> */}
 
-                  <div className="form__input-row form__input-row--two">
+                  {/* <div className="form__input-row form__input-row--two">
                     <div className="form__col">
                       <input className="form__input form__input--sm" type="text" placeholder="Phone number" />
                     </div>
@@ -78,7 +107,7 @@ const CheckoutPage = () => {
                         </select>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </form>
               </div>
             </div>
@@ -88,6 +117,9 @@ const CheckoutPage = () => {
                 <h3 className="block__title">Payment method</h3>
                 <ul className="round-options round-options--three">
                   <li className="round-item">
+                    <img src="/images/logos/COD.jpg" alt="COD" title="COD" />
+                  </li>
+                  {/* <li className="round-item">
                     <img src="/images/logos/paypal.png" alt="Paypal" />
                   </li>
                   <li className="round-item">
@@ -104,7 +136,7 @@ const CheckoutPage = () => {
                   </li>
                   <li className="round-item">
                     <img src="/images/logos/ideal-logo.svg" alt="Paypal" />
-                  </li>
+                  </li> */}
                 </ul>
               </div>
               
@@ -112,6 +144,10 @@ const CheckoutPage = () => {
                 <h3 className="block__title">Delivery method</h3>
                 <ul className="round-options round-options--two">
                   <li className="round-item round-item--bg">
+                    <img src="/images/logos/COD.jpg" alt="COD" />
+                    <p>$1.00</p>
+                  </li>
+                  {/* <li className="round-item round-item--bg">
                     <img src="/images/logos/inpost.svg" alt="Paypal" />
                     <p>$20.00</p>
                   </li>
@@ -126,7 +162,7 @@ const CheckoutPage = () => {
                   <li className="round-item round-item--bg">
                     <img src="/images/logos/maestro.png" alt="Paypal" />
                     <p>$10.00</p>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </div>
@@ -147,8 +183,12 @@ const CheckoutPage = () => {
           <div className="cart-actions cart-actions--checkout">
             <a href="/cart" className="cart__btn-back"><i className="icon-left"></i> Back</a>
             <div className="cart-actions__items-wrapper">
-              <button type="button" className="btn btn--rounded btn--border">Continue shopping</button>
-              <button type="button" className="btn btn--rounded btn--yellow">Proceed to payment</button>
+              <button type="button" className="btn btn--rounded btn--border" onClick={redirectToHome}>
+                Continue shopping
+                </button>
+              <button type="button" className="btn btn--rounded btn--yellow" onClick={submitOrder}>
+                Proceed to payment
+              </button>
             </div>
           </div>
         </div>

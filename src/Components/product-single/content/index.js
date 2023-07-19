@@ -31,13 +31,12 @@ const Content = ({ product }) => {
 
 	const addToCart = () => {
 		const productToSave = {
-			id: product.id,
-			name: product.name,
-			thumb: product.images ? product.images[0] : '',
-			price: product.currentPrice,
+			id: product.productId,
+			name: product.productName,
+			thumb: product.images,
+			price: product.price,
+			material: product.productTechnicals.map(item => item.materialName).join(","),
 			count: count,
-			color: color,
-			size: itemSize,
 		};
 
 		const productStore = {
@@ -66,35 +65,12 @@ const Content = ({ product }) => {
 
 			<div className="product-content__filters">
 				<div className="product-filter-item">
-					<h5>Color:</h5>
-					<div className="checkbox-color-wrapper">
-						{productsColors.map((type) => (
-							<CheckboxColor
-								key={type.id}
-								type={'radio'}
-								name="product-color"
-								color={type.color}
-								valueName={type.label}
-								onChange={onColorSet}
-							/>
-						))}
-					</div>
-				</div>
-				<div className="product-filter-item">
-					<h5>
-						Size: <strong>See size table</strong>
-					</h5>
-					<div className="checkbox-color-wrapper">
-						<div className="select-wrapper">
-							<select onChange={onSelectChange}>
-								<option>Choose size</option>
-								{productsSizes.map((type) => (
-									<option value={type.label}>{type.label}</option>
-								))}
-							</select>
-						</div>
-					</div>
-				</div>
+					<h5>Description & Details:</h5>
+					{product.description}
+					{product.productTechnicals.map(item => (
+						<div>{item.techName} of {item.materialName}: {item.parameter} ({item.unit})</div>
+					))}
+				</div>				
 				<div className="product-filter-item">
 					<h5>Quantity:</h5>
 					<div className="quantity-buttons">

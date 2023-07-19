@@ -3,6 +3,7 @@ import Header from '../Components/header'
 import { useRouter } from 'next/router'
 import ScrollToTop from "react-scroll-to-top";
 import UpgradeToProButton from './components/UpgradeToProButton'
+import 'antd/dist/reset.css';
 
 const ClientLayout = ({ children, title = 'Next.js Ecommerce' }) => {
   const router = useRouter()
