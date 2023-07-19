@@ -6,10 +6,10 @@ SwiperCore.use([EffectFade, Navigation]);
 const PageIntro = () => {
 
   return (
-    <section className="page-intro">  
+    <section className="page-intro">
       <Swiper navigation effect="fade" className="swiper-wrapper">
         <SwiperSlide>
-          <div className="page-intro__slide" style={{ backgroundImage: "url('/images/slide-1.jpg')" }}>
+          <div className="page-intro__slide" style={{ backgroundImage: "url('/images/slide-1.webp')" }}>
             <div className="container">
               <div className="page-intro__slide__content">
                 <h2>Sale of the summer collection</h2>
@@ -20,7 +20,7 @@ const PageIntro = () => {
         </SwiperSlide>
 
         <SwiperSlide>
-          <div className="page-intro__slide" style={{ backgroundImage: "url('/images/slide-2.jpg')" }}>
+          <div className="page-intro__slide" style={{ backgroundImage: "url('/images/slide-2.webp')" }}>
             <div className="container">
               <div className="page-intro__slide__content">
                 <h2>Make your house into a home</h2>
@@ -41,7 +41,7 @@ const PageIntro = () => {
                 <p>On purchases over $199</p>
               </div>
             </li>
-            
+
             <li>
               <i className="icon-shipping"></i>
               <div className="data-item__content">
@@ -49,7 +49,7 @@ const PageIntro = () => {
                 <p>Our clients' opinions speak for themselves</p>
               </div>
             </li>
-            
+
             <li>
               <i className="icon-cash"></i>
               <div className="data-item__content">

@@ -8,7 +8,7 @@ export function useProductFunc() {
   const ListProductFunc = useCallback(async (dataFilter) => {
     try {
       const result = await axios.post(baseURL + '/api/Products/filter', dataFilter);
-      return result.data.data;
+      return result.data;
     } catch (err) {
       console.error(err)
     }

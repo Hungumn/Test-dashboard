@@ -11,24 +11,24 @@ const IndexPage = (props) => {
 
       <section className="featured">
         <div className="container">
-          <article style={{backgroundImage: 'url(/images/featured-1.jpg)'}} className="featured-item featured-item-large">
+          <article style={{backgroundImage: 'url(/images/slider_3.webp)'}} className="featured-item featured-item-large">
             <div className="featured-item__content">
               <h3>New arrivals are now in!</h3>
-              <a href="#" className="btn btn--rounded">Show Collection</a>
+              <a href="/products" className="btn btn--rounded">Show Collection</a>
             </div>
           </article>
-          
-          <article style={{backgroundImage: 'url(/images/featured-2.jpg)'}} className="featured-item featured-item-small-first">
+
+          <article style={{backgroundImage: 'url(/images/service_about_1.webp)'}} className="featured-item featured-item-small-first">
             <div className="featured-item__content">
-              <h3>Basic t-shirts $29,99</h3>
-              <a href="#" className="btn btn--rounded">More details</a>
+              <h3>Basic bangles $29,99</h3>
+              <a href="/products" className="btn btn--rounded">More details</a>
             </div>
           </article>
-          
-          <article style={{backgroundImage: 'url(/images/featured-3.jpg)'}} className="featured-item featured-item-small">
+
+          <article style={{backgroundImage: 'url(/images/trang-suc-bac-ca-tinh-5.webp)'}} className="featured-item featured-item-small">
             <div className="featured-item__content">
               <h3>Sale this summer</h3>
-              <a href="#" className="btn btn--rounded">VIEW ALL</a>
+              <a href="/products" className="btn btn--rounded">VIEW ALL</a>
             </div>
           </article>
         </div>
@@ -48,7 +48,7 @@ const IndexPage = (props) => {
                 <p>All purchases over $199 are eligible for free shipping via USPS First Class Mail.</p>
               </div>
             </li>
-            
+
             <li>
               <i className="icon-payment"></i>
               <div className="data-item__content">
@@ -56,7 +56,7 @@ const IndexPage = (props) => {
                 <p>All payments are processed instantly over a secure payment protocol.</p>
               </div>
             </li>
-            
+
             <li>
               <i className="icon-cash"></i>
               <div className="data-item__content">
@@ -65,7 +65,7 @@ const IndexPage = (props) => {
                 back for a full refund.</p>
               </div>
             </li>
-            
+
             <li>
               <i className="icon-materials"></i>
               <div className="data-item__content">

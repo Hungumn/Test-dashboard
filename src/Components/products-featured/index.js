@@ -13,7 +13,7 @@ const ProductsFeatured = () => {
 
   const getListProduct = async() => {
     const result = await ListProductFunc({page: 1, limit: 10});
-    setListProduct(result);
+    setListProduct(result.data);
   };
   return (
     <section className="section section-products-featured">

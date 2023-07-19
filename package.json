@@ -59,7 +59,7 @@
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/auth-ui-react": "^0.4.2",
     "@supabase/supabase-js": "^2.26.0",
-    "antd": "^5.7.0",
+    "antd": "^5.7.1",
     "apexcharts-clevision": "3.28.5",
     "aws-sdk": "^2.1413.0",
     "axios": "^1.4.0",
@@ -97,6 +97,7 @@
     "swiper": "6.5.1",
     "swr": "^2.2.0",
     "unsplash-js": "^7.0.18",
+    "use-debounce": "^9.0.4",
     "use-onclickoutside": "^0.4.1",
     "yup": "^1.2.0"
   },

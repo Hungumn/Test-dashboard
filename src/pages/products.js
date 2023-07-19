@@ -7,6 +7,8 @@ import { useState, useEffect } from 'react';
 import { useProductFunc } from "src/@core/hooks/use-product";
 import { useCategoryFunc } from 'src/@core/hooks/use-category'
 import { useMaterialFunc } from 'src/@core/hooks/use-material'
+import { useDebounce } from 'use-debounce';
+import { Pagination } from 'antd';
 
 const Products = () => {
   const { ListProductFunc } = useProductFunc();
@@ -14,25 +16,33 @@ const Products = () => {
   const { ListMaterialFunc } = useMaterialFunc();
 
   const [listProduct, setListProduct] = useState([]);
+  const [totalCount, setTotalCount] = useState([]);
   const [listCategory, setListCategory] = useState([]);
   const [listMaterial, setListMaterial] = useState([]);
   const [dataFilter, setDataFilter] = useState({
       page: 1,
-      limit: 10,
+      limit: 15,
       productName: "",
-      categories: [],   
+      categories: [],
       materials: [],
       colors: [],
       sizes: [],
       minPrice: 0,
       maxPrice: 0
   });
+  const [filter] = useDebounce(dataFilter, 500);
   useEffect(() => {
     getListProduct();
+  }, [filter]);
+
+  useEffect(() => {
     getCategories();
     getMaterial();
   }, []);
-  
+
+  const handleChangePagination = (page) => {
+    setDataFilter({...dataFilter, page});
+  };
 
   const getCategories = async () => {
     const data = await ListCategoryFunc()
@@ -43,9 +53,10 @@ const Products = () => {
     setListMaterial(data);
   };
   const getListProduct = async() => {
-    const result = await ListProductFunc(dataFilter);
-    setListProduct(result);
-  } 
+    const result = await ListProductFunc(filter);
+    setListProduct(result.data);
+    setTotalCount(result.totalCount);
+  }
 
   return (
     <>
@@ -53,8 +64,11 @@ const Products = () => {
         <Breadcrumb title={'All Product'} />
         <section className="products-page">
           <div className="container">
-            <ProductsFilter listCategory={listCategory} listMaterial={listMaterial} />
+            <ProductsFilter listCategory={listCategory} listMaterial={listMaterial} dataFilter={dataFilter} setDataFilter={setDataFilter} />
             <ProductsContent listProduct={listProduct} />
+          </div>
+          <div style={{display: 'flex', justifyContent: 'center'}}>
+            <Pagination current={dataFilter.page} pageSize={dataFilter.limit} total={totalCount} onChange={handleChangePagination} />
           </div>
         </section>
         <Footer />
@@ -62,6 +76,5 @@ const Products = () => {
     </>
   )
 }
-  
+
 export default Products
-  
