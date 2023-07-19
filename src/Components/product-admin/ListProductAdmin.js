@@ -77,15 +77,16 @@ let filterOptions = [
   }
 ]
 
-const applyFilters = (students, filters) => {
-  return students.filter(s => {
-    const student = s
+const applyFilters = (items, filters) => {
+  console.log('items', items);
+  return items?.filter(s => {
+    const item = s
     if (filters.query) {
       let queryMatched = false
       const properties = ['productName']
 
       properties.forEach(property => {
-        if (student[property].toLowerCase().includes(filters.query.toLowerCase())) {
+        if (item[property].toLowerCase().includes(filters.query.toLowerCase())) {
           queryMatched = true
         }
       })
@@ -133,8 +134,6 @@ const getComparator = (filterDir, filterBy) =>
 
 const applyFilterByStatus = (items, filterBy) => {
   let filterByStatus
-
-  console.log({ items, filterBy })
 
   if (filterBy === 'all') {
     filterByStatus = items
