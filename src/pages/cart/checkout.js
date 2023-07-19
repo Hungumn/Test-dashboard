@@ -5,10 +5,14 @@ import CheckoutStatus from 'src/Components/checkout-status';
 import CheckoutItems from 'src/Components/checkout';
 import { useEffect, useState } from 'react';
 import { useAuth } from 'src/@core/hooks/use-auth'
+import { useOrderFunc } from "src/@core/hooks/use-cart";
 import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast'
 
 const CheckoutPage = () => {
+  const { cartItems } = useSelector(state => state.cart);
   const router = useRouter();
+  const orderFunc = useOrderFunc();
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [fullName, setFullName] = useState("");
@@ -28,7 +32,7 @@ const CheckoutPage = () => {
       setFullName(user.fullName);
       setAddress(user.add);
       setEmail(user.email);
-      setPhoneNo(user.phoneNo);
+      setPhoneNo(user.phone);
     }
   }, []);
 
@@ -46,7 +50,30 @@ const CheckoutPage = () => {
     router.push("/home-page");
   };
 
-  const submitOrder = () => {};
+  const submitOrder = async() => {
+    let data = {
+      createdBy: user.fullName,
+      accountId: user.id,
+      recipientName: fullName,
+      address: address,
+      phoneNo: phoneNo,
+      totalPrice: priceTotal,
+      status: 1,
+      isPaid: 1,
+      orderDetails: cartItems.map(item => ({
+        productId: item.id,
+        quantity: item.count,
+        price: item.price
+      })),
+    }
+    const result = await orderFunc.CreateOrder(data);
+    console.log(result);
+    if(result) {
+      toast.success("Order Successfully!");
+    } else {
+      toast.error("Order Failed");
+    }
+  };
 
   return (
     <Layout>

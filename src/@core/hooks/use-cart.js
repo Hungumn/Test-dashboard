@@ -44,9 +44,25 @@ export function useOrderFunc() {
     }
   }, []);
 
+  const CreateOrder = useCallback(async(data) => {
+    try {
+      const result = await axios.post(`${baseURL}/api/Orders/insert`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      return result.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
 
   return {
-    ListProductFunc,
-    ProductDetailFunc
+    ListOrderFunc,
+    OrderDetailFunc,
+    OrderUpdateFunc,
+    OrderDetailByUserFunc,
+    CreateOrder
   }
 }
