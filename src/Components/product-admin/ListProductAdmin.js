@@ -22,6 +22,7 @@ import ArrowRightCircle from 'mdi-material-ui/ArrowRightCircle'
 import { useRouter } from 'next/router'
 import { getInitials } from 'src/@core/utils/get-initials'
 import { useCategoryFunc } from 'src/@core/hooks/use-category'
+import { useProductFunc } from 'src/@core/hooks/use-product'
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170 },
@@ -147,6 +148,7 @@ const applyFilterByStatus = (items, filterBy) => {
 const applyPagination = (items, page, rowsPerPage) => items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 
 const ListProductAdminTable = props => {
+  const { DeleteProductFunc } = useProductFunc()
   const queryRef = useRef(null)
   const { ListCategoryFunc } = useCategoryFunc()
   const router = useRouter()
@@ -164,7 +166,7 @@ const ListProductAdminTable = props => {
   })
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
-  const { product, setRender, render } = props
+  const { product, setRender, render, getListProduct } = props
   const path = process.env.NEXT_PUBLIC_S3_URL
 
   function getValuesFromArray(arr, property) {
@@ -274,13 +276,13 @@ const ListProductAdminTable = props => {
               <Button
                 variant='contained'
                 onClick={async () => {
-                  console.log('user selected', userSelected)
-                  const deleteUser = await deleteUserAdminFunc(userSelected)
-                  if (deleteUser == 200) {
+                  const deleteUser = await DeleteProductFunc(userSelected)
+                  if (deleteUser) {
                     toast.success('Delete Success!')
                   } else {
                     toast.error('Delete Error! Try again')
                   }
+                  getListProduct();
                   setOpenModal(!openModal)
                   setRender(!render)
                 }}
@@ -321,7 +323,7 @@ const ListProductAdminTable = props => {
           <TableBody>
             {paginatedStudents.map((item, index) => {
               return (
-                <TableRow key={item.accountId}>
+                <TableRow key={item.productId}>
                   <TableCell align={'left'}>{item.productName}</TableCell>
                   <TableCell align={'left'}>{item.categoryName}</TableCell>
                   <TableCell align={'left'}>{moment.unix(item.createdDate).format('MM/DD/YYYY')}</TableCell>
@@ -341,9 +343,9 @@ const ListProductAdminTable = props => {
                     <Box sx={{ display: 'flex !important' }}>
                       <Button
                         onClick={() => {
-                          console.log('account id...', item?.accountId)
+                          console.log('account id...', item?.productId)
                           setOpenModal(true)
-                          setUserSelected(item.accountId)
+                          setUserSelected(item.productId)
                         }}
                       >
                         <CloseCircleOutline
@@ -356,7 +358,7 @@ const ListProductAdminTable = props => {
                       </Button>
                       <Button
                         onClick={() => {
-                          router.push(`list-user-admin/${item?.accountId}`)
+                          router.push(`products-admin/${item?.productId}`)
                         }}
                       >
                         <ArrowRightCircle
