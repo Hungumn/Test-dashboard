@@ -14,10 +14,14 @@ function ProductAdmin() {
   const { ListProductFunc } = useProductFunc()
   const [listCategory, setListCategory] = useState([])
   const [render, setRender] = useState(false)
-  useEffect(async () => {
+  useEffect( () => {
+    getListProduct();
+  }, []);
+
+  const getListProduct = async() => {
     const dataUser = await ListProductFunc({ limit: -1 })
-    setListCategory(dataUser)
-  }, [])
+    setListCategory(dataUser.data)
+  };
 
   console.log('data: ', listCategory)
 
@@ -34,7 +38,7 @@ function ProductAdmin() {
       <Grid item xs={12}>
         <Card>
           <CardHeader />
-          <ListProductAdminTable product={listCategory} setRender={setRender} render={render} />
+          <ListProductAdminTable product={listCategory} getListProduct={getListProduct} setRender={setRender} render={render} />
         </Card>
       </Grid>
     </Grid>
