@@ -99,6 +99,7 @@
     "unsplash-js": "^7.0.18",
     "use-debounce": "^9.0.4",
     "use-onclickoutside": "^0.4.1",
+    "uuid": "^9.0.0",
     "yup": "^1.2.0"
   },
   "devDependencies": {

@@ -38,9 +38,39 @@ export function useProductFunc() {
     }
   }, []);
 
+  const UpdateProductFunc = useCallback(async (id, data) => {
+    try {
+      const result = await axios.post(`${baseURL}/api/Products/update/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      return result.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const CreateProductFunc = useCallback(async (data) => {
+    try {
+      const result = await axios.post(`${baseURL}/api/Products/insert`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      return result.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   return {
     ListProductFunc,
     ProductDetailFunc,
-    DeleteProductFunc
+    DeleteProductFunc,
+    UpdateProductFunc,
+    CreateProductFunc,
   }
 }
