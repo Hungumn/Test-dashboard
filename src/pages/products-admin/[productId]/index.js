@@ -17,6 +17,7 @@ import { styled } from '@mui/material/styles'
 import { useProductFunc } from 'src/@core/hooks/use-product'
 import { useRouter } from 'next/router';
 import _ from 'lodash'
+import TechnicalTable from 'src/Components/product-single/technical/table';
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 200,
@@ -51,9 +52,11 @@ const ProductDetailAdmin = () => {
     if(productDetail) {
       setProduct(productDetail);
       if (_.isNull(productDetail.images) || _.isEmpty(productDetail.images)) {
-        setImgSrc('/images/avatars/1.png')
+        setImgSrc('/images/avatars/1.png');
+      } else if(productDetail.images.includes("https://")) {
+        setImgSrc(productDetail.images);
       } else {
-        setImgSrc(`${path}${productDetail.images}`)
+        setImgSrc(`${path}${productDetail.images}`);
       }
     }
   }, []);
@@ -75,7 +78,7 @@ const ProductDetailAdmin = () => {
               <Button
                 variant='contained'
                 sx={{ marginRight: 3.5, float: 'right' }}
-                onClick={() => router.push(`${userId}/update-user`)}
+                onClick={() => router.push(`${productId}/update-product`)}
                 startIcon={<StepForward2 />}
               >
                 Update
@@ -93,23 +96,22 @@ const ProductDetailAdmin = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Chip icon={<AccountGroupOutline />} label='Category' variant='outlined' />
-              <DetailTypographyStyled>{product?.productName}</DetailTypographyStyled>
+              <DetailTypographyStyled>{product?.categoryName}</DetailTypographyStyled>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Chip icon={<Email />} label='Email' variant='outlined' />
-              <DetailTypographyStyled>{product?.productName}</DetailTypographyStyled>
+              <Chip icon={<Email />} label='Quantity' variant='outlined' />
+              <DetailTypographyStyled>{product?.quantity}</DetailTypographyStyled>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Chip icon={<CalendarRange />} label='Bird Date' variant='outlined' />
-              <DetailTypographyStyled>{product?.productName}</DetailTypographyStyled>
+              <Chip icon={<CalendarRange />} label='Price' variant='outlined' />
+              <DetailTypographyStyled>{product?.price}</DetailTypographyStyled>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <Chip icon={<CardAccountPhone />} label='Phone Number' variant='outlined' />
-              <DetailTypographyStyled>{product?.productName}</DetailTypographyStyled>
+            <Grid item xs={12} sm={12}>
+              <Chip icon={<CardAccountPhone />} label='Description' variant='outlined' />
+              <DetailTypographyStyled>{product?.description}</DetailTypographyStyled>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <Chip icon={<MapMarker />} label='Address' variant='outlined' />
-              <DetailTypographyStyled>{product?.productName}</DetailTypographyStyled>
+            <Grid item xs={12} sm={12}>
+              <TechnicalTable dataSource={product.productTechnicals}/>
             </Grid>
           </Grid>
         </form>
