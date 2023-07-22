@@ -26,6 +26,7 @@ import { Form, Input, Row, Col, Select, Button as AButton } from 'antd';
 
 // import component 
 import Technical from "../../../Components/product-single/technical/index.js"
+import { v4 as uuidv4 } from 'uuid';
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 200,
@@ -51,8 +52,8 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
   }
 }))
 
-const UpdateProductAdmin = () => {
-  const { ProductDetailFunc, UpdateProductFunc } = useProductFunc();
+const CreateProductAdmin = () => {
+  const { CreateProductFunc } = useProductFunc();
   const { ListCategoryFunc } = useCategoryFunc();
   const { ListMaterialFunc } = useMaterialFunc();
   const { ListTechincalFunc } = useTechnicalFunc();
@@ -66,7 +67,7 @@ const UpdateProductAdmin = () => {
   const [avatarFile, setAvatarFile] = useState()
   const [avatarURL, setAvatarURL] = useState()
   const router = useRouter()
-  const productId = router.query.productId
+  const productId = uuidv4();
   const { uploadToS3 } = useS3Upload()
   const path = process.env.NEXT_PUBLIC_S3_URL
   const [listCategory, setListCategory] = useState([]);
@@ -95,28 +96,10 @@ const UpdateProductAdmin = () => {
     getListCategory();
     getListMaterial();
     getListTechnical();
-    const productDetail = await ProductDetailFunc(productId)
-    if(productDetail) {
-      setProduct(productDetail);
-      if (_.isNull(productDetail.images) || _.isEmpty(productDetail.images)) {
-        setImgSrc('/images/avatars/1.png');
-      } else if(productDetail.images.includes("https://")) {
-        setImgSrc(productDetail.images);
-      } else {
-        setImgSrc(`${path}${productDetail.images}`);
-      }
-      setFormValue(productDetail);
-      setProductTechnicals(productDetail.productTechnicals);
-    }
+    setImgSrc('/images/avatars/1.png');
+    
+    setProductTechnicals([{ prodTechId: 1, techId: null, unit: "", materialId: null, parameter: "" }]);
   }, []);
-
-  const setFormValue = (productDetail) => {
-    form.setFieldValue("name", productDetail.productName);
-    form.setFieldValue("price", productDetail.price);
-    form.setFieldValue("quantity", productDetail.quantity);
-    form.setFieldValue("description", productDetail.description);
-    form.setFieldValue("category", productDetail.categoryId);
-  };
 
   const formatProductTechnical = () => {
     const listKey = ["techId", "materialId", "parameter"];
@@ -149,20 +132,20 @@ const UpdateProductAdmin = () => {
         let data = {
           productName: res.name,
           categoryId: res.category,
-          images: key || product.images,
+          images: key,
           quantity: 15,
           price: res.price,
           description: res.description,
           productTechnicals: listProductTechs,
-          modifiedBy: "Admin"
+          createdBy: "Admin"
         };
         
-        const result = await UpdateProductFunc(productId, data);
+        const result = await CreateProductFunc(data);
         if(result) {
-          toast.success("Update product success");
-          router.push(`/products-admin/${productId}`);
+          toast.success("Create product success");
+          router.push(`/products-admin/${result}`);
         } else {
-          toast.error("Update product failed");
+          toast.error("Create product failed");
         }
       })
       .catch(err => console.log(err))
@@ -176,7 +159,7 @@ const UpdateProductAdmin = () => {
           request: {
             body: {
               projectId: productId,
-              folder: 'Avatar'
+              folder: 'image product'
             }
           }
         }
@@ -312,10 +295,10 @@ const UpdateProductAdmin = () => {
   </>)
 };
 
-UpdateProductAdmin.getLayout = page => (
+CreateProductAdmin.getLayout = page => (
   <AuthGuard role={'Admin'}>
     <UserLayout>{page}</UserLayout>
   </AuthGuard>
 )
 
-export default UpdateProductAdmin;
+export default CreateProductAdmin;
