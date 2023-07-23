@@ -24,8 +24,40 @@ export function useMaterialFunc() {
     }
   }, [])
 
+  const DeleteMaterialFunc = useCallback(async(id) => {
+    const result = await axios.post(`${baseURL}/api/Materials/delete`, [id], {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    return result.data;
+  });
+
+  const CreateMaterialFunc = useCallback(async(data) => {
+    const result = await axios.post(`${baseURL}/api/Materials/insert`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    return result.data;
+  });
+
+  const UpdateMaterialFunc = useCallback(async(data, id) => {
+    const result = await axios.post(`${baseURL}/api/Materials/update/${id}`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    return result.data;
+  });
 
   return {
     ListMaterialFunc,
+    DeleteMaterialFunc,
+    CreateMaterialFunc,
+    UpdateMaterialFunc,
   }
 }

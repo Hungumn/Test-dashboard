@@ -18,14 +18,59 @@ export function useCategoryFunc() {
         }
       })
 
-      return categoryList.data.data
+      return categoryList.data
     } catch (err) {
       console.error(err)
     }
-  }, [])
+  }, []);
+
+  const DeleteCategoryFunc = useCallback(async(id) => {
+    try {
+      const result = await axios.post(`${baseURL}/api/Categories/delete`, [id], {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      return result.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const CreateCategoryFunc = useCallback(async(data) => {
+    try {
+      const result = await axios.post(`${baseURL}/api/Categories/insert`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      return result.data;
+    } catch (error) {
+      console.log(error.response);
+    }
+  }, []);
+
+  const UpdateCategoryFunc = useCallback(async(data, id) => {
+    try {
+      const result = await axios.post(`${baseURL}/api/Categories/update/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      return result.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
 
   return {
     ListCategoryFunc,
+    DeleteCategoryFunc,
+    CreateCategoryFunc,
+    UpdateCategoryFunc,
   }
 }
