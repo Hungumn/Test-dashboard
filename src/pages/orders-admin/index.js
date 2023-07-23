@@ -8,12 +8,12 @@ import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
 import OrderTable from 'src/Components/order-admin/orderTable'
 import { useOrderFunc } from 'src/@core/hooks/use-cart'
-import { Button, Modal, Form } from "antd";
+import { Button, Modal, Form, Tabs, Card as Acard } from "antd";
  
 const OrderAdmin = () => {
     const { ListOrderFunc } = useOrderFunc()
     const [listData, setListData] = useState([])
-    const [openModal, setOpenModal] = useState(false)
+    const [activeKey, setActiveKey] = useState(1)
     useEffect( () => {
         getListData();
     }, []);
@@ -23,8 +23,23 @@ const OrderAdmin = () => {
         setListData(data.data)
     };
 
-    const handleAdd = () => {
-        setOpenModal(true);
+    const items = [{
+        key: 1,
+        label: `New order`,
+        children: <OrderTable dataSource={listData} getListData={getListData} />,
+    },{
+        key: 4,
+        label: `Going Delivery`,
+        children: <OrderTable dataSource={listData} getListData={getListData} />,
+    },{
+        key: 5,
+        label: `Delivered`,
+        children: <OrderTable dataSource={listData} getListData={getListData} />,
+    },
+    ];
+    const onChange = (key) => {
+        setActiveKey(key)
+        console.log(key);
     };
     return (<>
         <Grid container spacing={6}>
@@ -37,10 +52,9 @@ const OrderAdmin = () => {
                 <Typography variant='body2'>Tables display sets of data. They can be fully customized</Typography>
             </Grid>
             <Grid item xs={12}>
-                <Card>
-                    <CardHeader />
-                    <OrderTable dataSource={listData} getListData={getListData} />
-                </Card>
+                <Acard>
+                    <Tabs activeKey={activeKey} items={items} onChange={onChange} animated={true} />
+                </Acard>
             </Grid>
         </Grid>
     </>)

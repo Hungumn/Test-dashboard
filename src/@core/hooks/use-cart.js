@@ -20,7 +20,11 @@ export function useOrderFunc() {
 
   const OrderDetailFunc = useCallback(async (id) => {
     try {
-      const result = await axios.get(baseURL + '/api/Orders/' + id);
+      const result = await axios.get(baseURL + '/api/Orders/' + id, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
       return result.data;
     } catch (error) {
@@ -61,12 +65,27 @@ export function useOrderFunc() {
     }
   }, []);
 
+  const UpdateOrderStatus = useCallback(async(id, status) => {
+    try {
+      const result = await axios.post(`${baseURL}/api/Orders/updateStatus/${id}`, {status}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
 
   return {
     ListOrderFunc,
     OrderDetailFunc,
     OrderUpdateFunc,
     OrderDetailByUserFunc,
-    CreateOrder
+    CreateOrder,
+    UpdateOrderStatus
   }
 }

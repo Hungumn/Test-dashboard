@@ -26,12 +26,12 @@ const navigation = () => {
       path: '/account-settings'
     },
     {
-      title: 'Product List',
+      title: 'Products',
       icon: TreasureChest,
       path: '/products-admin'
     },
     {
-      title: 'List Users',
+      title: 'Users',
       icon: AccountBoxMultiple,
       path: '/list-user-admin'
     },
@@ -39,57 +39,87 @@ const navigation = () => {
       sectionTitle: 'Pages'
     },
     {
-      title: 'Login',
-      icon: Login,
-      path: '/pages/login',
+      title: 'Categories',
+      icon: TreasureChest,
+      path: '/categories-admin',
       openInNewTab: true
     },
     {
-      title: 'Register',
-      icon: AccountPlusOutline,
-      path: '/pages/register',
+      title: 'Materials',
+      icon: TreasureChest,
+      path: '/materials-admin',
       openInNewTab: true
     },
     {
-      title: 'Index Client',
-      icon: HomeAccount,
-      path: '/home-page',
+      title: 'Technicals',
+      icon: TreasureChest,
+      path: '/technicals-admin',
       openInNewTab: true
     },
     {
-      title: 'Error',
-      icon: AlertCircleOutline,
-      path: '/pages/error',
+      title: 'Orders',
+      icon: TreasureChest,
+      path: '/orders-admin',
       openInNewTab: true
     },
-    {
-      sectionTitle: 'User Interface'
-    },
-    {
-      title: 'Typography',
-      icon: FormatLetterCase,
-      path: '/typography'
-    },
-    {
-      title: 'Icons',
-      path: '/icons',
-      icon: GoogleCirclesExtended
-    },
-    {
-      title: 'Cards',
-      icon: CreditCardOutline,
-      path: '/cards'
-    },
-    {
-      title: 'Tables',
-      icon: Table,
-      path: '/tables'
-    },
-    {
-      icon: CubeOutline,
-      title: 'Form Layouts',
-      path: '/form-layouts'
-    }
+    // {
+    //   title: 'Login',
+    //   icon: Login,
+    //   path: '/pages/login',
+    //   openInNewTab: true
+    // },
+    // {
+    //   title: 'Register',
+    //   icon: AccountPlusOutline,
+    //   path: '/pages/register',
+    //   openInNewTab: true
+    // },
+    // {
+    //   title: 'Index Client',
+    //   icon: HomeAccount,
+    //   path: '/home-page',
+    //   openInNewTab: true
+    // },
+    // {
+    //   title: 'Error',
+    //   icon: AlertCircleOutline,
+    //   path: '/pages/error',
+    //   openInNewTab: true
+    // },
+    // {
+    //   title: 'Error',
+    //   icon: AlertCircleOutline,
+    //   path: '/pages/error',
+    //   openInNewTab: true
+    // },
+    // {
+    //   sectionTitle: 'User Interface'
+    // },
+    // {
+    //   title: 'Typography',
+    //   icon: FormatLetterCase,
+    //   path: '/typography'
+    // },
+    // {
+    //   title: 'Icons',
+    //   path: '/icons',
+    //   icon: GoogleCirclesExtended
+    // },
+    // {
+    //   title: 'Cards',
+    //   icon: CreditCardOutline,
+    //   path: '/cards'
+    // },
+    // {
+    //   title: 'Tables',
+    //   icon: Table,
+    //   path: '/tables'
+    // },
+    // {
+    //   icon: CubeOutline,
+    //   title: 'Form Layouts',
+    //   path: '/form-layouts'
+    // }
   ]
 }
 

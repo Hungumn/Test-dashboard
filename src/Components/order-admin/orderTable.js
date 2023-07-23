@@ -16,16 +16,15 @@ const OrderTable = ({ dataSource, getListData }) => {
         { title: "", key: "action", dataIndex: "orderId", render: (text) => {
             return (<>
                 <Button style={{ marginRight: '6px' }} type='primary' onClick={() => handleDetail(text)}>Detail</Button>
-                <Button type='primary' danger onClick={() => handleDelete(text)}>Delete</Button>
             </>)
-        } },
+        }},
     ];
     const { DeleteTechnicalFunc } = useOrderFunc()
     const handleDelete = (id) => {
         Modal.confirm({
             centered: true,
             title: "Are you sure?",
-            content: "Are you sure to delete this technical?",
+            content: "Are you sure to delete this order?",
             okText: "Delete",
             okButtonProps: { danger: true },
             onOk() {
