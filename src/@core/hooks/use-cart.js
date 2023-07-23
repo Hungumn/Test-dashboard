@@ -7,8 +7,12 @@ export function useOrderFunc() {
 
   const ListOrderFunc = useCallback(async (dataFilter) => {
     try {
-      const result = await axios.post(baseURL + '/api/Orders/filter', dataFilter);
-      return result.data.data;
+      const result = await axios.post(baseURL + '/api/Orders/filter', dataFilter, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return result.data;
     } catch (err) {
       console.error(err)
     }
