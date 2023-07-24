@@ -4,6 +4,7 @@ import { useTechnicalFunc } from 'src/@core/hooks/use-technical'
 import TechModal from "src/Components/technical-admin/technicalModal";
 
 const MaterialTable = ({ dataSource, getListData }) => {
+    const [modal, contextHolder] = Modal.useModal();
     const [openModal, setOpenModal] = useState(false);
     const [dataDetail, setDataDetail] = useState(false);
     const columns = [
@@ -20,7 +21,7 @@ const MaterialTable = ({ dataSource, getListData }) => {
     ];
     const { DeleteTechnicalFunc } = useTechnicalFunc()
     const handleDelete = (id) => {
-        Modal.confirm({
+        modal.confirm({
             centered: true,
             title: "Are you sure?",
             content: "Are you sure to delete this technical?",
@@ -45,6 +46,7 @@ const MaterialTable = ({ dataSource, getListData }) => {
     };
 
     return (<>
+        <div>{contextHolder}</div>
         <Table
             key="techId"
             columns={columns}

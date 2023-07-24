@@ -21,19 +21,19 @@ const CheckoutPage = () => {
   let loginBtn;
   useEffect(() => {
     console.log(user);
-    if(!user.fullName) {
-      loginBtn = (
-        <div className="checkout__btns">
-          <button className="btn btn--rounded btn--yellow">Log in</button>
-          <button className="btn btn--rounded btn--border">Sign up</button>
-        </div>
-      );
-    } else {
+    // if(!user?.fullName) {
+    //   loginBtn = (
+    //     <div className="checkout__btns">
+    //       <button className="btn btn--rounded btn--yellow">Log in</button>
+    //       <button className="btn btn--rounded btn--border">Sign up</button>
+    //     </div>
+    //   );
+    // } else {
       setFullName(user.fullName);
       setAddress(user.add);
       setEmail(user.email);
       setPhoneNo(user.phone);
-    }
+    // }
   }, []);
 
   const priceTotal = useSelector((state) => {
@@ -100,7 +100,7 @@ const CheckoutPage = () => {
                       <input className="form__input form__input--sm" value={address} onChange={(e) => setAddress(e.target.value)} type="text" placeholder="Address" />
                     </div>
                   </div>
-                  
+
                   <div className="form__input-row form__input-row--two">
                     <div className="form__col">
                       <input className="form__input form__input--sm" value={fullName} onChange={(e) => setFullName(e.target.value)} type="text" placeholder="Fullname" />
@@ -110,7 +110,7 @@ const CheckoutPage = () => {
                       <input className="form__input form__input--sm" value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} type="text" placeholder="Phone number" />
                     </div>
                   </div>
-                  
+
                   {/* <div className="form__input-row form__input-row--two">
                     <div className="form__col">
                       <input className="form__input form__input--sm" type="text" placeholder="Last name" />
@@ -138,7 +138,7 @@ const CheckoutPage = () => {
                 </form>
               </div>
             </div>
-            
+
             <div className="checkout__col-4">
               <div className="block">
                 <h3 className="block__title">Payment method</h3>
@@ -166,7 +166,7 @@ const CheckoutPage = () => {
                   </li> */}
                 </ul>
               </div>
-              
+
               <div className="block">
                 <h3 className="block__title">Delivery method</h3>
                 <ul className="round-options round-options--two">
@@ -193,12 +193,12 @@ const CheckoutPage = () => {
                 </ul>
               </div>
             </div>
-            
+
             <div className="checkout__col-2">
               <div className="block">
                 <h3 className="block__title">Your cart</h3>
                 <CheckoutItems />
-                
+
                 <div className="checkout-total">
                   <p>Total cost</p>
                   <h3>${priceTotal}</h3>
@@ -206,7 +206,7 @@ const CheckoutPage = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="cart-actions cart-actions--checkout">
             <a href="/cart" className="cart__btn-back"><i className="icon-left"></i> Back</a>
             <div className="cart-actions__items-wrapper">
@@ -224,5 +224,5 @@ const CheckoutPage = () => {
   )
 };
 
-  
+
 export default CheckoutPage

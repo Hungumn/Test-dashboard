@@ -2,17 +2,26 @@ import { useState, useEffect } from 'react';
 import { Button, Table, Modal, message } from "antd";
 import { useOrderFunc } from 'src/@core/hooks/use-cart'
 import { useRouter } from 'next/router';
+import moment from 'moment';
 
 const OrderTable = ({ dataSource, getListData }) => {
     const router = useRouter();
-    
+
     const columns = [
         { title: "Order customer", key: "recipientName", dataIndex: "recipientName" },
         { title: "Address", key: "address", dataIndex: "address" },
         { title: "PhoneNo", key: "phoneNo", dataIndex: "phoneNo" },
-        { title: "Total Price", key: "totalPrice", dataIndex: "totalPrice" },
+        { title: "Total Price", key: "totalPrice", dataIndex: "totalPrice", render: (text) => {
+          return (<>
+            ${ text }
+          </>)
+        }},
         { title: "Created by", key: "createdBy", dataIndex: "createdBy" },
-        { title: "Modified by", key: "ModifiedBy", dataIndex: "ModifiedBy" },
+        { title: "Created date", key: "createdDate", dataIndex: "createdDate", render: (text) => {
+          return (<>
+            { convertToDate(text) }
+          </>)
+        }},
         { title: "", key: "action", dataIndex: "orderId", render: (text) => {
             return (<>
                 <Button style={{ marginRight: '6px' }} type='primary' onClick={() => handleDetail(text)}>Detail</Button>
@@ -20,6 +29,10 @@ const OrderTable = ({ dataSource, getListData }) => {
         }},
     ];
     const { DeleteTechnicalFunc } = useOrderFunc()
+    const convertToDate = (timestamp) => {
+      console.log(timestamp);
+      return moment.unix(timestamp).format("DD/MM/YYYY HH:mm:ss")
+    };
     const handleDelete = (id) => {
         Modal.confirm({
             centered: true,

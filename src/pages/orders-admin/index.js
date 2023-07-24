@@ -9,7 +9,7 @@ import CardHeader from '@mui/material/CardHeader'
 import OrderTable from 'src/Components/order-admin/orderTable'
 import { useOrderFunc } from 'src/@core/hooks/use-cart'
 import { Button, Modal, Form, Tabs, Card as Acard } from "antd";
- 
+
 const OrderAdmin = () => {
     const { ListOrderFunc } = useOrderFunc()
     const [listData, setListData] = useState([])
@@ -35,8 +35,7 @@ const OrderAdmin = () => {
         key: 5,
         label: `Delivered`,
         children: <OrderTable dataSource={listData} getListData={getListData} />,
-    },
-    ];
+    }];
     const onChange = (key) => {
         setActiveKey(key)
         console.log(key);
@@ -48,7 +47,7 @@ const OrderAdmin = () => {
                     <Link href='https://mui.com/components/tables/' target='_blank'>
                     List of Order
                     </Link>
-                </Typography> 
+                </Typography>
                 <Typography variant='body2'>Tables display sets of data. They can be fully customized</Typography>
             </Grid>
             <Grid item xs={12}>

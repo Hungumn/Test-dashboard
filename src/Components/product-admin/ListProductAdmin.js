@@ -187,7 +187,7 @@ const ListProductAdminTable = props => {
     const dataCategory = await ListCategoryFunc()
     console.log('category...', dataCategory)
     if (!_.isEmpty(dataCategory)) {
-      filterOptions = getValuesFromArray(dataCategory, 'categoryName')
+      filterOptions = getValuesFromArray(dataCategory.data, 'categoryName')
       console.log('filterOptions', filterOptions)
     }
   }, [])

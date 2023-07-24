@@ -2,7 +2,8 @@ import { AuthGuard } from 'src/@core/hooks/auth-guard'
 import UserLayout from 'src/layouts/UserLayout';
 import { useOrderFunc } from 'src/@core/hooks/use-cart'
 
-import { Form, Card, Input, Button, Select, Row, Col, Table, message } from 'antd';
+import { Form, Card, Input, Button, Select, Row, Col, Table, message, Avatar } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
@@ -11,7 +12,22 @@ const OrderDetail = () => {
     const [form] = Form.useForm();
     const orderId = router.query.orderId;
     const { OrderDetailFunc, UpdateOrderStatus } = useOrderFunc();
+    const [ switchBtn, setSwitchBtn ] = useState({});
     const columns = [
+        { title: "Images", dataIndex: "images", key: "images", render: (text) => {
+          const path = process.env.NEXT_PUBLIC_S3_URL;
+          let imgSrc = '';
+          if(text) {
+            if(text.includes("https://")) {
+              imgSrc = text;
+            } else {
+              imgSrc = `${path}${text}`;
+            }
+          }
+          return (<>
+            <Avatar shape="square" size="large" src={imgSrc} />
+          </>)
+        }},
         { title: "Product name", dataIndex: "productName", key: "productName" },
         { title: "Quantity", dataIndex: "quantity", key: "quantity" },
         { title: "Product's price", dataIndex: "price", key: "price" },
@@ -25,6 +41,17 @@ const OrderDetail = () => {
     const getOrderDetail = async() => {
         const data = await OrderDetailFunc(orderId);
         if(data) {
+            switch (data.status) {
+              case 4:
+                setSwitchBtn(statusList.find(i => i.value == 5));
+                break;
+              case 5:
+                setSwitchBtn(statusList.find(i => i.value == 6));
+                break;
+              default:
+                setSwitchBtn(statusList.find(i => i.value == 4));
+                break;
+            }
             setDataSource(data.orderDetails);
             setForm(data);
         }
@@ -38,8 +65,8 @@ const OrderDetail = () => {
         form.setFieldValue("status", data.status);
     };
 
-    const handleChangeStatus = async() => {
-        const result = await UpdateOrderStatus(orderId, "3");
+    const handleChangeStatus = async(value) => {
+        const result = await UpdateOrderStatus(orderId, value);
         if(result) {
             message.success("Update status successfully");
         } else {
@@ -47,11 +74,22 @@ const OrderDetail = () => {
         }
     };
 
+    const statusList = [
+      { label: "Switch to the shipping", value: 4 },
+      { label: "Switch to the delivered", value: 5 },
+      { label: "Delete order", value: 6, danger: true },
+    ];
+
     return (<>
         <Card title={
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>Order detail</div>
-                <Button onClick={handleChangeStatus} type='primary'>Đánh dấu là đang vận chuyển</Button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <Button type='link' icon={<ArrowLeftOutlined />} size="large" onClick={() => router.push("/orders-admin")} style={{ marginBottom: '8px', padding: '0' }}>
+                    Back to list
+                  </Button>
+                  <div style={{ height: '40px', fontSize: '18px' }}>Order detail</div>
+                </div>
+                <Button onClick={() => handleChangeStatus(switchBtn.value)} danger={switchBtn.danger} type='primary'>{switchBtn.label}</Button>
             </div>
         }>
             <Form layout='vertical' form={form}>

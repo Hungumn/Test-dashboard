@@ -36,32 +36,28 @@ const navigation = () => {
       path: '/list-user-admin'
     },
     {
-      sectionTitle: 'Pages'
-    },
-    {
       title: 'Categories',
       icon: TreasureChest,
       path: '/categories-admin',
-      openInNewTab: true
     },
     {
       title: 'Materials',
       icon: TreasureChest,
       path: '/materials-admin',
-      openInNewTab: true
     },
     {
       title: 'Technicals',
       icon: TreasureChest,
       path: '/technicals-admin',
-      openInNewTab: true
     },
     {
       title: 'Orders',
       icon: TreasureChest,
       path: '/orders-admin',
-      openInNewTab: true
     },
+    // {
+    //   sectionTitle: 'Pages'
+    // },
     // {
     //   title: 'Login',
     //   icon: Login,

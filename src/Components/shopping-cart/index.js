@@ -4,8 +4,12 @@ import { RootState } from 'store';
 import CheckoutStatus from '../checkout-status';
 import { OrderDetailByUserFunc } from 'src/@core/hooks/use-cart';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useAuth } from 'src/@core/hooks/use-auth'
 
 const ShoppingCart = () => {
+  const router = useRouter();
+  const user = useAuth().user;
   const { cartItems } = useSelector((state)  => state.cart);
   const [ order, setOrder ] = useState({});
 
@@ -20,6 +24,14 @@ const ShoppingCart = () => {
 
     return totalPrice;
   }
+
+  const handleCheckout = () => {
+    if(user) {
+      router.push("/cart/checkout");
+    } else {
+      router.push("/pages/login");
+    }
+  };
 
   return (
     <section className="cart">
@@ -42,7 +54,7 @@ const ShoppingCart = () => {
                 </tr>
 
                 {cartItems.map(item => (
-                  <Item 
+                  <Item
                     key={item.id}
                     id={item.id}
                     thumb={item.thumb}
@@ -53,21 +65,21 @@ const ShoppingCart = () => {
                   />
                 ))}
               </tbody>
-            </table> 
-          } 
-          
-          {cartItems.length === 0 && 
+            </table>
+          }
+
+          {cartItems.length === 0 &&
             <p>Nothing in the cart</p>
           }
         </div>
-      
+
         <div className="cart-actions">
           <a href="/products" className="cart__btn-back"><i className="icon-left"></i> Continue Shopping</a>
           <input type="text" placeholder="Promo Code" className="cart__promo-code" />
 
           <div className="cart-actions__items-wrapper">
             <p className="cart-actions__total">Total cost <strong>${priceTotal().toFixed(2)}</strong></p>
-            <a href="/cart/checkout" className="btn btn--rounded btn--yellow">Checkout</a>
+            <div className="btn btn--rounded btn--yellow" onClick={handleCheckout}>Checkout</div>
           </div>
         </div>
       </div>
@@ -75,5 +87,5 @@ const ShoppingCart = () => {
   )
 };
 
-  
+
 export default ShoppingCart
