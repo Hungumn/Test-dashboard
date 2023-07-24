@@ -23,6 +23,7 @@ import { useRouter } from 'next/router'
 import { getInitials } from 'src/@core/utils/get-initials'
 import { useCategoryFunc } from 'src/@core/hooks/use-category'
 import { useProductFunc } from 'src/@core/hooks/use-product'
+import _ from 'lodash'
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170 },
@@ -79,7 +80,7 @@ let filterOptions = [
 ]
 
 const applyFilters = (items, filters) => {
-  console.log('items', items);
+  console.log('items', items)
   return items?.filter(s => {
     const item = s
     if (filters.query) {
@@ -184,9 +185,11 @@ const ListProductAdminTable = props => {
 
   useEffect(async () => {
     const dataCategory = await ListCategoryFunc()
-    console.log('category', dataCategory)
-    filterOptions = getValuesFromArray(dataCategory, 'categoryName')
-    console.log('filterOptions', filterOptions)
+    console.log('category...', dataCategory)
+    if (!_.isEmpty(dataCategory)) {
+      filterOptions = getValuesFromArray(dataCategory, 'categoryName')
+      console.log('filterOptions', filterOptions)
+    }
   }, [])
 
   const handleQueryChange = event => {
@@ -282,7 +285,7 @@ const ListProductAdminTable = props => {
                   } else {
                     toast.error('Delete Error! Try again')
                   }
-                  getListProduct();
+                  getListProduct()
                   setOpenModal(!openModal)
                   setRender(!render)
                 }}

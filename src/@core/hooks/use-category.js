@@ -17,8 +17,7 @@ export function useCategoryFunc() {
           Authorization: `Bearer ${token}`
         }
       })
-
-      return categoryList.data
+      return categoryList.data.data
     } catch (err) {
       console.error(err)
     }
@@ -31,7 +30,7 @@ export function useCategoryFunc() {
           Authorization: `Bearer ${token}`
         }
       });
-      
+
       return result.data;
     } catch (error) {
       console.log(error);
