@@ -5,6 +5,7 @@ import { useCategoryFunc } from 'src/@core/hooks/use-category'
 import CategoryModal from "src/Components/category-admin/categoryModal";
 
 const CategoryTable = ({ dataSource, getListCategory }) => {
+    const [modal, contextHolder] = Modal.useModal();
     const [openModal, setOpenModal] = useState(false);
     const [categoryDetail, setCategoryDetail] = useState(false);
     const columns = [
@@ -30,14 +31,14 @@ const CategoryTable = ({ dataSource, getListCategory }) => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
     const handleDelete = (id) => {
-        Modal.confirm({
+        modal.confirm({
             centered: true,
             title: "Are you sure?",
             content: "Are you sure to delete this category?",
             okText: "Delete",
             okButtonProps: { danger: true },
-            onOk() {
-                const result = DeleteCategoryFunc(id);
+            onOk: async() => {
+                const result = await DeleteCategoryFunc(id);
                 if(result) {
                     message.success("Delete category successfully");
                     getListCategory();
@@ -55,6 +56,7 @@ const CategoryTable = ({ dataSource, getListCategory }) => {
     };
 
     return (<>
+        <div>{contextHolder}</div>
         <Table
             key="categoryId"
             rowSelection={rowSelection}

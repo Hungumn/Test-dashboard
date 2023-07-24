@@ -17,7 +17,7 @@ export function useCategoryFunc() {
           Authorization: `Bearer ${token}`
         }
       })
-      return categoryList.data.data
+      return categoryList.data
     } catch (err) {
       console.error(err)
     }

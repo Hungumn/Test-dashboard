@@ -4,6 +4,7 @@ import { useMaterialFunc } from 'src/@core/hooks/use-material'
 import MaterialModal from "src/Components/material-admin/materialModal";
 
 const MaterialTable = ({ dataSource, getListData }) => {
+    const [modal, contextHolder] = Modal.useModal();
     const [openModal, setOpenModal] = useState(false);
     const [dataDetail, setDataDetail] = useState(false);
     const columns = [
@@ -19,14 +20,14 @@ const MaterialTable = ({ dataSource, getListData }) => {
     ];
     const { DeleteMaterialFunc } = useMaterialFunc()
     const handleDelete = (id) => {
-        Modal.confirm({
+        modal.confirm({
             centered: true,
             title: "Are you sure?",
             content: "Are you sure to delete this material?",
             okText: "Delete",
             okButtonProps: { danger: true },
-            onOk() {
-                const result = DeleteMaterialFunc(id);
+            onOk: async() => {
+                const result = await DeleteMaterialFunc(id);
                 if(result) {
                     message.success("Delete material successfully");
                     getListData();
@@ -44,6 +45,7 @@ const MaterialTable = ({ dataSource, getListData }) => {
     };
 
     return (<>
+        <div>{contextHolder}</div>
         <Table
             key="materialId"
             columns={columns}
