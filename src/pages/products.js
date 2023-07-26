@@ -46,7 +46,7 @@ const Products = () => {
 
   const getCategories = async () => {
     const data = await ListCategoryFunc()
-    setListCategory(data);
+    setListCategory(data.data);
   };
   const getMaterial = async () => {
     const data = await ListMaterialFunc();
