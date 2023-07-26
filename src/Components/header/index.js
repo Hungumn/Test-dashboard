@@ -85,24 +85,24 @@ const Header = ({ isErrorPage }) => {
           </a>
         </Link>
         <nav ref={navRef} className={`site-nav ${menuOpen ? 'site-nav--open' : ''}`}>
-          <Link href='/products'>
+          {/* <Link href='/products'>
             <a>Products</a>
           </Link>
           <a href='#'>Inspiration</a>
           <a href='#'>Rooms</a>
           <button className='site-nav__btn'>
             <p>Account</p>
-          </button>
+          </button> */}
         </nav>
 
         <div className='site-header__actions'>
-          <button ref={searchRef} className={`search-form-wrapper ${searchOpen ? 'search-form--active' : ''}`}>
+          {/* <button ref={searchRef} className={`search-form-wrapper ${searchOpen ? 'search-form--active' : ''}`}>
             <form className={`search-form`}>
               <i className='icon-cancel' onClick={() => setSearchOpen(!searchOpen)}></i>
               <input type='text' name='search' placeholder='Enter the product you are looking for' />
             </form>
             <i onClick={() => setSearchOpen(!searchOpen)} className='icon-search'></i>
-          </button>
+          </button> */}
           <Link href='/cart'>
             <button className='btn-cart'>
               <i className='icon-cart'></i>

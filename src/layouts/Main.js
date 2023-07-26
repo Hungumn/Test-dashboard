@@ -5,7 +5,7 @@ import ScrollToTop from "react-scroll-to-top";
 import UpgradeToProButton from './components/UpgradeToProButton'
 import 'antd/dist/reset.css';
 
-const ClientLayout = ({ children, title = 'Next.js Ecommerce' }) => {
+const ClientLayout = ({ children, title = 'Jewelleries Ecommerce' }) => {
   const router = useRouter()
   const pathname = router.pathname
 
