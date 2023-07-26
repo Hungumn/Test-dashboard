@@ -181,7 +181,12 @@ const ProfileUserClient = () => {
     try {
       setIsLoading(true)
       const valuesFormik = formik.values
-      const key = await handleUpload()
+      let key;
+      if(avatarFile) {
+        key = await handleUpload()
+      } else {
+        key = user.avatar;
+      }
       const dataPost = {
         fullName: valuesFormik.fullName,
         address: valuesFormik.address,
