@@ -4,7 +4,7 @@ import { useOrderFunc } from 'src/@core/hooks/use-cart'
 import { useRouter } from 'next/router';
 import moment from 'moment';
 
-const OrderTable = ({ dataSource, getListData }) => {
+const OrderTable = ({ dataSource, getListData, loading }) => {
     const router = useRouter();
 
     const columns = [
@@ -16,6 +16,11 @@ const OrderTable = ({ dataSource, getListData }) => {
             ${ text }
           </>)
         }},
+        { title: "Paid", key: "isPaid", dataIndex: "isPaid", render: (text) => {
+            return (<>
+              { text == 1 ? "Not Paid" : "Paided" }
+            </>)
+          }},
         { title: "Created by", key: "createdBy", dataIndex: "createdBy" },
         { title: "Created date", key: "createdDate", dataIndex: "createdDate", render: (text) => {
           return (<>
@@ -58,6 +63,7 @@ const OrderTable = ({ dataSource, getListData }) => {
 
     return (<>
         <Table
+            loading={loading}
             key="orderId"
             columns={columns}
             dataSource={dataSource}
