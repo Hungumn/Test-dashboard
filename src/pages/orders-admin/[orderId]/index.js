@@ -11,7 +11,8 @@ const OrderDetail = () => {
     const router = useRouter();
     const [form] = Form.useForm();
     const orderId = router.query.orderId;
-    const { OrderDetailFunc, UpdateOrderStatus } = useOrderFunc();
+    const { OrderDetailFunc, UpdateOrderStatus, UpdateOrderIsPaid } = useOrderFunc();
+    const [isPaid, setIsPaid] = useState(1);
     const [ switchBtn, setSwitchBtn ] = useState({});
     const columns = [
         { title: "Images", dataIndex: "images", key: "images", render: (text) => {
@@ -46,13 +47,14 @@ const OrderDetail = () => {
                 setSwitchBtn(statusList.find(i => i.value == 5));
                 break;
               case 5:
-                setSwitchBtn(statusList.find(i => i.value == 6));
+                setSwitchBtn(statusList.find(i => i.value == 2));
                 break;
               default:
                 setSwitchBtn(statusList.find(i => i.value == 4));
                 break;
             }
             setDataSource(data.orderDetails);
+            setIsPaid(data.isPaid);
             setForm(data);
         }
     };
@@ -65,19 +67,30 @@ const OrderDetail = () => {
         form.setFieldValue("status", data.status);
     };
 
-    const handleChangeStatus = async(value) => {
-        const result = await UpdateOrderStatus(orderId, value);
-        if(result) {
-            message.success("Update status successfully");
+    const handleChangeStatus = async(value, key) => {
+        if(key == 'status') {
+            const result = await UpdateOrderStatus(orderId, value);
+            if(result) {
+                message.success("Update status successfully");
+            } else {
+                message.error("Update status failed");
+            }
         } else {
-            message.error("Update status failed");
+            const result = await UpdateOrderIsPaid(orderId, 2);
+            if(result) {
+                message.success("Update payment status successfully");
+                form.setFieldValue("isPaid", 2);
+                setIsPaid(2);
+            } else {
+                message.error("Update payment status failed");
+            }
         }
     };
 
     const statusList = [
-      { label: "Switch to the shipping", value: 4 },
-      { label: "Switch to the delivered", value: 5 },
-      { label: "Delete order", value: 6, danger: true },
+      { label: "Switch to the shipping", value: 4, key: "status" },
+      { label: "Switch to the delivered", value: 5, key: "status" },
+      { label: "Switch to the Paided", value: 2, key: "isPaid" },
     ];
 
     return (<>
@@ -89,7 +102,7 @@ const OrderDetail = () => {
                   </Button>
                   <div style={{ height: '40px', fontSize: '18px' }}>Order detail</div>
                 </div>
-                <Button onClick={() => handleChangeStatus(switchBtn.value)} danger={switchBtn.danger} type='primary'>{switchBtn.label}</Button>
+                <Button onClick={() => handleChangeStatus(switchBtn.value, switchBtn.key)} disabled={isPaid == 1 ? false : true} type='primary'>{switchBtn.label}</Button>
             </div>
         }>
             <Form layout='vertical' form={form}>

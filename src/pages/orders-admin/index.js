@@ -14,31 +14,34 @@ const OrderAdmin = () => {
     const { ListOrderFunc } = useOrderFunc()
     const [listData, setListData] = useState([])
     const [activeKey, setActiveKey] = useState(1)
+    const [loading, setLoading] = useState(false);
     useEffect( () => {
         getListData();
-    }, []);
+    }, [activeKey]);
 
     const getListData = async() => {
-        const data = await ListOrderFunc({ limit: -1 })
-        setListData(data.data)
+        setLoading(true);
+        const data = await ListOrderFunc({ limit: -1, status: activeKey })
+        setListData(data.data);
+        setLoading(false);
     };
 
     const items = [{
         key: 1,
         label: `New order`,
-        children: <OrderTable dataSource={listData} getListData={getListData} />,
+        children: <OrderTable loading={loading} dataSource={listData} getListData={getListData} />,
     },{
         key: 4,
         label: `Going Delivery`,
-        children: <OrderTable dataSource={listData} getListData={getListData} />,
+        children: <OrderTable loading={loading} dataSource={listData} getListData={getListData} />,
     },{
         key: 5,
         label: `Delivered`,
-        children: <OrderTable dataSource={listData} getListData={getListData} />,
+        children: <OrderTable loading={loading} dataSource={listData} getListData={getListData} />,
     }];
     const onChange = (key) => {
         setActiveKey(key)
-        console.log(key);
+        // getListData();
     };
     return (<>
         <Grid container spacing={6}>

@@ -79,6 +79,19 @@ export function useOrderFunc() {
     }
   }, []);
 
+  const UpdateOrderIsPaid = useCallback(async(id, isPaid) => {
+    try {
+      const result = await axios.post(`${baseURL}/api/Orders/updateIsPaid/${id}`, {isPaid}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   return {
     ListOrderFunc,
@@ -86,6 +99,7 @@ export function useOrderFunc() {
     OrderUpdateFunc,
     OrderDetailByUserFunc,
     CreateOrder,
-    UpdateOrderStatus
+    UpdateOrderStatus,
+    UpdateOrderIsPaid
   }
 }
